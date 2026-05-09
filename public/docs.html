@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BRIX + TRIXSTER — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg:          #0a0a0b;
+    --bg2:         #111114;
+    --bg3:         #18181d;
+    --border:      rgba(255,255,255,0.07);
+    --accent:      #e8ff47;
+    --accent2:     #ff6b2b;
+    --text:        #e2e2e6;
+    --muted:       #6b6b78;
+    --sidebar-w:   270px;
+    --header-h:    56px;
+    --radius:      10px;
+    --mono:        'Space Mono', monospace;
+    --display:     'Syne', sans-serif;
+    --body:        'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ─── TOPBAR ─────────────────────────────────────────── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: rgba(10,10,11,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+
+  .topbar-logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    text-decoration: none;
+  }
+  .topbar-logo span { color: var(--accent); }
+
+  .topbar-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none; border: none; cursor: pointer;
+    color: var(--text); padding: 6px;
+  }
+  .menu-toggle svg { display: block; }
+
+  /* ─── LAYOUT ─────────────────────────────────────────── */
+  .layout {
+    display: flex;
+    padding-top: var(--header-h);
+    min-height: 100vh;
+  }
+
+  /* ─── SIDEBAR ────────────────────────────────────────── */
+  .sidebar {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    width: var(--sidebar-w);
+    height: calc(100vh - var(--header-h));
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 28px 0 40px;
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+    z-index: 90;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-group {
+    margin-bottom: 6px;
+  }
+
+  .sidebar-group-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 22px 10px;
+    display: block;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 22px;
+    color: #8b8b98;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: color 0.15s, background 0.15s;
+    border-left: 2px solid transparent;
+    margin: 0;
+    position: relative;
+  }
+  .sidebar-link:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .sidebar-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(232,255,71,0.05);
+    font-weight: 500;
+  }
+  .sidebar-link .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .sidebar-link.active .dot { opacity: 1; }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 14px 22px;
+  }
+
+
+  /* ─── MAIN CONTENT ───────────────────────────────────── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    max-width: 900px;
+    padding: 60px 56px 120px;
+  }
+
+  /* ─── SECTIONS ───────────────────────────────────────── */
+  .doc-section {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg2);
+    transition: border-color 0.2s;
+  }
+  .doc-section:hover { border-color: rgba(255,255,255,0.12); }
+  .doc-section.open { border-color: rgba(232,255,71,0.2); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    border: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+  .section-header:hover { background: rgba(255,255,255,0.02); }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    min-width: 28px;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+    flex: 1;
+  }
+
+  .section-chevron {
+    width: 18px; height: 18px;
+    color: var(--muted);
+    transition: transform 0.25s ease, color 0.2s;
+    flex-shrink: 0;
+  }
+  .doc-section.open .section-chevron { transform: rotate(180deg); color: var(--accent); }
+
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(.4,0,.2,1);
+  }
+  .doc-section.open .section-body { max-height: 4000px; }
+
+  .section-inner {
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── TYPOGRAPHY INSIDE SECTIONS ─────────────────────── */
+  .section-inner p {
+    color: #b0b0be;
+    margin-bottom: 14px;
+    font-size: 14.5px;
+  }
+  .section-inner p:last-child { margin-bottom: 0; }
+
+  .section-inner h3 {
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 26px 0 12px;
+  }
+  .section-inner h3:first-child { margin-top: 20px; }
+
+  .section-inner ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 14px;
+  }
+  .section-inner ul li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    color: #b0b0be;
+    font-size: 14.5px;
+  }
+  .section-inner ul li::before {
+    content: '—';
+    position: absolute; left: 0;
+    color: var(--accent2);
+    font-family: var(--mono);
+  }
+
+  /* HIGHLIGHT BOX */
+  .callout {
+    background: rgba(232,255,71,0.05);
+    border: 1px solid rgba(232,255,71,0.15);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 18px 0;
+    font-size: 14px;
+    color: #c8c8a0;
+    font-style: italic;
+  }
+  .callout strong { color: var(--accent); font-style: normal; }
+
+  /* TABLES */
+  .tbl-wrap { overflow-x: auto; margin: 18px 0; border-radius: 8px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--mono);
+  }
+
+  thead tr {
+    background: var(--bg3);
+    border-bottom: 1px solid rgba(232,255,71,0.2);
+  }
+
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    color: #c0c0cc;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  td.hi { color: #fff; font-weight: 700; }
+  td.accent-cell { color: var(--accent); }
+  td.orange-cell { color: var(--accent2); }
+
+  /* TIER BADGES */
+  .tier {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+  .tier-legendary { background: rgba(255,200,50,0.15); color: #ffc832; border: 1px solid rgba(255,200,50,0.3); }
+  .tier-epic      { background: rgba(180,100,255,0.15); color: #b464ff; border: 1px solid rgba(180,100,255,0.3); }
+  .tier-golden    { background: rgba(255,170,50,0.12); color: #ffaa32; border: 1px solid rgba(255,170,50,0.25); }
+  .tier-rare      { background: rgba(80,160,255,0.12); color: #50a0ff; border: 1px solid rgba(80,160,255,0.25); }
+  .tier-uncommon  { background: rgba(255,255,255,0.05); color: #888; border: 1px solid rgba(255,255,255,0.1); }
+
+  /* STAT CARDS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+  }
+  .stat-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-family: var(--mono);
+  }
+  .stat-card.accent-card { border-color: rgba(232,255,71,0.2); }
+  .stat-card.accent-card .stat-value { color: var(--accent); }
+
+  /* HERO BANNER */
+  .doc-hero {
+    margin-bottom: 40px;
+  }
+  .doc-hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .doc-hero h1 {
+    font-family: var(--display);
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  .doc-hero h1 span { color: var(--accent); }
+  .doc-hero p {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 520px;
+    line-height: 1.65;
+  }
+
+  /* OVERLAY for mobile */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 89;
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .main { margin-left: 0; padding: 40px 24px 80px; }
+
+    .sidebar {
+      transform: translateX(-100%);
+      z-index: 200;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .menu-toggle { display: flex; }
+    .sidebar-overlay.open { display: block; }
+
+    .topbar { padding: 0 16px; }
+    .doc-hero h1 { font-size: 26px; }
+  }
+
+  @media (max-width: 540px) {
+    .main { padding: 32px 16px 60px; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .section-header { padding: 14px 16px; }
+    .section-inner { padding: 0 16px 22px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-line {
+    position: fixed;
+    top: var(--header-h);
+    left: var(--sidebar-w);
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 99;
+    transition: transform 0.1s linear;
+  }
+
+  @media (max-width: 900px) {
+    .scroll-line { left: 0; }
+  }
+
+  /* NOTE */
+  .note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg3);
+    border-left: 2px solid var(--accent2);
+    padding: 10px 14px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-line" id="scrollLine"></div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="#" class="topbar-logo">BRIX<span>+</span>TRIXSTER</a>
+  <span class="topbar-tag">Documentation</span>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <rect y="4" width="22" height="2" rx="1" fill="currentColor"/>
+      <rect y="10" width="22" height="2" rx="1" fill="currentColor"/>
+      <rect y="16" width="22" height="2" rx="1" fill="currentColor"/>
+    </svg>
+  </button>
+</header>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <span class="sidebar-group-label">Overview</span>
+    <div class="sidebar-group">
+      <a href="#intro"         class="sidebar-link active"><span class="dot"></span>Introduction</a>
+      <a href="#story"         class="sidebar-link"><span class="dot"></span>The Story</a>
+      <a href="#token"         class="sidebar-link"><span class="dot"></span>$BRIX Token</a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <span class="sidebar-group-label">Collection</span>
+    <div class="sidebar-group">
+      <a href="#nft"           class="sidebar-link"><span class="dot"></span>NFT Collection</a>
+      <a href="#reveal"        class="sidebar-link"><span class="dot"></span>Hidden Reveal System</a>
+      <a href="#rarity"        class="sidebar-link"><span class="dot"></span>Rarity System</a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <span class="sidebar-group-label">Mechanics</span>
+    <div class="sidebar-group">
+      <a href="#phases"        class="sidebar-link"><span class="dot"></span>Mint Phases</a>
+      <a href="#rewards"       class="sidebar-link"><span class="dot"></span>Reward Pool</a>
+      <a href="#jackpot"       class="sidebar-link"><span class="dot"></span>Jackpot System</a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <span class="sidebar-group-label">Ecosystem</span>
+    <div class="sidebar-group">
+      <a href="#longterm"      class="sidebar-link"><span class="dot"></span>Long-Term Vision</a>
+      <a href="#transparency"  class="sidebar-link"><span class="dot"></span>Transparency</a>
+      <a href="#notes"         class="sidebar-link"><span class="dot"></span>Final Notes</a>
+    </div>
+
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+
+    <div class="doc-hero">
+      <span class="doc-hero-eyebrow">Official Documentation</span>
+      <h1>BRIX <span>+</span> TRIXSTER</h1>
+      <p>Public project documentation — burn mechanics, NFT collection, reward pools, jackpot system and long-term ecosystem vision.</p>
+    </div>
+
+    <!-- 1. INTRODUCTION -->
+    <div class="doc-section open" id="intro">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">01</span>
+        <span class="section-title">Introduction</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>BRIX + TRIXSTER is a Solana-based ecosystem built around two connected components:</p>
+          <ul>
+            <li><strong style="color:#fff">$BRIX</strong> — a community-driven meme token designed around burn mechanics and ecosystem participation.</li>
+            <li><strong style="color:#fff">TRIXSTER</strong> — a collection of 3,333 unique NFTs created on the Solana blockchain.</li>
+          </ul>
+          <div class="stat-grid">
+            <div class="stat-card accent-card">
+              <div class="stat-label">Total NFTs</div>
+              <div class="stat-value">3,333</div>
+              <div class="stat-sub">Metaplex Core</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">$BRIX Supply</div>
+              <div class="stat-value">1B</div>
+              <div class="stat-sub">Solana · Pump.fun</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Mint Phases</div>
+              <div class="stat-value">4</div>
+              <div class="stat-sub">F1 → F2 → F3 → F4</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Max Reward Pool</div>
+              <div class="stat-value">833</div>
+              <div class="stat-sub">SOL at sold out</div>
+            </div>
+          </div>
+          <p>The project combines token burn mechanics, progressive NFT mint phases, delayed reveals, reward pools, jackpot systems, and long-term holder incentives.</p>
+          <div class="callout"><strong>Core loop:</strong> Burn $BRIX. Mint a Trixster. Participate in the ecosystem.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STORY -->
+    <div class="doc-section" id="story">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">02</span>
+        <span class="section-title">The Story Behind TRIXSTER</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <div class="callout" style="font-style:normal; font-size:15px; line-height:1.6;">
+            "Born from the blockchain, BRIX by BRIX. Trixsters carry a smirk that knows something you don't. 3,333 unique characters on Solana — forged in fire, fueled by $BRIX."
+          </div>
+          <p>TRIXSTER is designed around boldness, speculation, progression, and community participation. Every mint contributes to a growing ecosystem where:</p>
+          <ul>
+            <li>$BRIX supply is reduced through burns</li>
+            <li>Funds feed the reward pool</li>
+            <li>NFT holders gain access to rewards and jackpots</li>
+            <li>Each phase introduces new opportunities</li>
+            <li>Trading fees and royalties are redistributed to holders</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TOKEN -->
+    <div class="doc-section" id="token">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">03</span>
+        <span class="section-title">$BRIX Token</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <h3>Overview</h3>
+          <p>$BRIX is a meme token integrated directly into the TRIXSTER minting system. It creates continuous deflationary pressure while acting as the primary access mechanism for NFT minting.</p>
+
+          <div class="stat-grid">
+            <div class="stat-card accent-card">
+              <div class="stat-label">Initial Supply</div>
+              <div class="stat-value">1B</div>
+              <div class="stat-sub">$BRIX tokens</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Burned at Sold Out</div>
+              <div class="stat-value">~240M</div>
+              <div class="stat-sub">~24% of total supply</div>
+            </div>
+          </div>
+
+          <h3>Deflationary Mechanics</h3>
+          <p>To mint a TRIXSTER NFT, users must either burn $BRIX tokens or use an alternative SOL option.</p>
+
+          <h3>$BRIX Burn Path</h3>
+          <ul>
+            <li>Tokens are permanently destroyed</li>
+            <li>Burned tokens never return to circulation</li>
+            <li>No portion of burned $BRIX goes to the team or treasury</li>
+            <li>Any undistributed rewards remain inside the ecosystem pool</li>
+          </ul>
+
+          <h3>Alternative SOL Burn Path</h3>
+          <p>Users may also choose a <strong style="color:#fff">0.4 SOL</strong> alternative instead of burning $BRIX. In that case:</p>
+          <ul>
+            <li><strong style="color:#fff">50%</strong> is used for $BRIX buyback and burn</li>
+            <li><strong style="color:#fff">50%</strong> goes into the reward pool</li>
+          </ul>
+          <p>This creates ongoing pressure toward reducing circulating $BRIX supply regardless of the path chosen.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. NFT COLLECTION -->
+    <div class="doc-section" id="nft">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">04</span>
+        <span class="section-title">TRIXSTER NFT Collection</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <div class="stat-grid">
+            <div class="stat-card accent-card">
+              <div class="stat-label">Total Supply</div>
+              <div class="stat-value">3,333</div>
+              <div class="stat-sub">unique NFTs</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Blockchain</div>
+              <div class="stat-value" style="font-size:16px">Solana</div>
+              <div class="stat-sub">Metaplex Core</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Secondary Royalties</div>
+              <div class="stat-value">6.9%</div>
+              <div class="stat-sub">back to ecosystem</div>
+            </div>
+          </div>
+
+          <h3>Mint Structure</h3>
+          <p>The collection is divided into four progressive mint phases. Each phase follows the same cycle:</p>
+          <ul>
+            <li>Burn Access</li>
+            <li>Mint</li>
+            <li>Hidden Pre-Reveal Period</li>
+            <li>Reveal</li>
+            <li>Jackpot Distribution</li>
+            <li>Reward Distribution</li>
+          </ul>
+          <p>This structure creates an evolving ecosystem rather than a single static mint event.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. REVEAL -->
+    <div class="doc-section" id="reveal">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">05</span>
+        <span class="section-title">Hidden Reveal System</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <h3>Pre-Reveal</h3>
+          <p>Before reveal, NFT rarity is completely hidden. No rarity traits are visible, and all NFTs display a temporary placeholder image. NFTs remain fully tradable on secondary markets during this period.</p>
+          <p>The goal is to maximize fairness, suspense, market speculation, and community engagement.</p>
+
+          <h3>Reveal</h3>
+          <p>At the end of each phase:</p>
+          <ul>
+            <li>NFTs are revealed — final artwork becomes visible</li>
+            <li>Real rarity tiers are publicly assigned</li>
+            <li>Reward eligibility is unlocked</li>
+          </ul>
+          <p>Each phase has its own reveal event. The hidden window creates a speculative secondary market before rarity is known — anyone holding during the pre-reveal period is playing with equal information.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. RARITY -->
+    <div class="doc-section" id="rarity">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">06</span>
+        <span class="section-title">Rarity System</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>The collection contains five rarity tiers. Higher rarity tiers receive larger reward allocations and increased jackpot weighting.</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Tier</th><th>Supply</th><th>Share</th><th>Reward/NFT</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="tier tier-legendary">Legendary</span></td>
+                  <td class="hi">82</td>
+                  <td>2.46%</td>
+                  <td class="accent-cell">1.5 SOL</td>
+                </tr>
+                <tr>
+                  <td><span class="tier tier-epic">Epic</span></td>
+                  <td class="hi">259</td>
+                  <td>7.77%</td>
+                  <td class="accent-cell">1.0 SOL</td>
+                </tr>
+                <tr>
+                  <td><span class="tier tier-golden">Golden</span></td>
+                  <td class="hi">331</td>
+                  <td>9.93%</td>
+                  <td class="accent-cell">0.5 SOL</td>
+                </tr>
+                <tr>
+                  <td><span class="tier tier-rare">Rare</span></td>
+                  <td class="hi">709</td>
+                  <td>21.27%</td>
+                  <td class="accent-cell">0.25 SOL</td>
+                </tr>
+                <tr>
+                  <td><span class="tier tier-uncommon">Uncommon</span></td>
+                  <td class="hi">1,952</td>
+                  <td>58.56%</td>
+                  <td style="color:var(--muted)">No guaranteed reward</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note">Uncommon holders retain jackpot eligibility — every phase, every holder has a chance.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. PHASES -->
+    <div class="doc-section" id="phases">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">07</span>
+        <span class="section-title">Mint Phases</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>The full collection is released progressively across four phases. Each phase has its own burn requirements, reveal event, jackpot, and reward distribution. At the end of the minting window, the phase cycle closes regardless of whether sold out.</p>
+
+          <h3>Phase Parameters</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Phase</th><th>NFTs</th><th>$BRIX Burn</th><th>Alt. Burn</th><th>Mint Price</th><th>Window</th><th>Jackpot</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="hi">F1</td><td>690</td><td>50k</td><td>0.4 SOL</td><td>0.25 SOL</td><td>1 week</td><td>2 winners</td>
+                </tr>
+                <tr>
+                  <td class="hi">F2</td><td>750</td><td>69k</td><td>0.4 SOL</td><td>0.25 SOL</td><td>2 weeks</td><td>3 winners</td>
+                </tr>
+                <tr>
+                  <td class="hi">F3</td><td>850</td><td>77k</td><td>0.4 SOL</td><td>0.25 SOL</td><td>3 weeks</td><td>4 winners</td>
+                </tr>
+                <tr>
+                  <td class="hi">F4</td><td>1,043</td><td>85k</td><td>0.4 SOL</td><td>0.25 SOL</td><td>4 weeks</td><td>5 winners</td>
+                </tr>
+                <tr style="background:rgba(232,255,71,0.04)">
+                  <td class="accent-cell" style="font-weight:700">TOTAL</td>
+                  <td class="hi">3,333</td>
+                  <td colspan="2" style="color:var(--muted)">~240M $BRIX burned</td>
+                  <td class="accent-cell">833.25 SOL</td>
+                  <td style="color:var(--muted)">10 weeks</td>
+                  <td class="hi">14 winners</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="note">$BRIX burn shown is per single NFT mint. Total ~240M $BRIX burned assumes full sold out across all phases.</div>
+
+          <h3>NFT Distribution by Phase & Tier</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Tier</th><th>F1 (690)</th><th>F2 (750)</th><th>F3 (850)</th><th>F4 (1,043)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="tier tier-legendary">Legendary</span></td><td>17</td><td>18</td><td>21</td><td>26</td></tr>
+                <tr><td><span class="tier tier-epic">Epic</span></td><td>54</td><td>58</td><td>66</td><td>81</td></tr>
+                <tr><td><span class="tier tier-golden">Golden</span></td><td>68</td><td>75</td><td>84</td><td>104</td></tr>
+                <tr><td><span class="tier tier-rare">Rare</span></td><td>147</td><td>159</td><td>181</td><td>222</td></tr>
+                <tr><td><span class="tier tier-uncommon">Uncommon</span></td><td>404</td><td>440</td><td>498</td><td>610</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Unminted NFTs</h3>
+          <p>NFTs that remain unminted by the end of a phase do not exist on-chain. They will be held in reserve for potential future uses, the details of which may be announced separately.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. REWARDS -->
+    <div class="doc-section" id="rewards">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">08</span>
+        <span class="section-title">Reward Pool</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <h3>How the Pool Works</h3>
+          <p>Every NFT mint contributes 0.25 SOL into a shared reward pool. The pool is funded by mint payments and part of the alternative SOL burn option. It is distributed to holders after each phase reveal, based on NFT rarity.</p>
+
+          <h3>Sold-Out Reward Pool</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Minted NFTs</th><th>Pool SOL</th><th>Jackpot (10%)</th><th>Pool Rewards</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>690 (F1)</td><td>172.5 SOL</td><td>17.3 SOL</td><td>155.3 SOL</td></tr>
+                <tr><td>1,440 (F1+F2)</td><td>360 SOL</td><td>36.0 SOL</td><td>324.0 SOL</td></tr>
+                <tr><td>2,290 (F1+F2+F3)</td><td>572.5 SOL</td><td>57.3 SOL</td><td>515.3 SOL</td></tr>
+                <tr style="background:rgba(232,255,71,0.04)">
+                  <td class="hi">3,333 (Sold Out)</td>
+                  <td class="accent-cell hi">833.25 SOL</td>
+                  <td>83.3 SOL</td>
+                  <td class="accent-cell hi">749.9 SOL</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Reward Distribution</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Tier</th><th>Reward per NFT</th><th>Net vs Mint Cost</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="tier tier-legendary">Legendary</span></td><td class="accent-cell">1.5 SOL</td><td style="color:#6bff8b">+1.25 SOL</td></tr>
+                <tr><td><span class="tier tier-epic">Epic</span></td><td class="accent-cell">1.0 SOL</td><td style="color:#6bff8b">+0.75 SOL</td></tr>
+                <tr><td><span class="tier tier-golden">Golden</span></td><td class="accent-cell">0.5 SOL</td><td style="color:#6bff8b">+0.25 SOL</td></tr>
+                <tr><td><span class="tier tier-rare">Rare</span></td><td class="accent-cell">0.25 SOL</td><td style="color:var(--muted)">~break even</td></tr>
+                <tr><td><span class="tier tier-uncommon">Uncommon</span></td><td style="color:var(--muted)">No guaranteed reward</td><td style="color:var(--muted)">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Rewards are designed to create meaningful differences between rarity tiers while maintaining broad participation across the collection.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. JACKPOT -->
+    <div class="doc-section" id="jackpot">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">09</span>
+        <span class="section-title">Jackpot System</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>10% of each phase pool is allocated to jackpot events. At the end of every phase, multiple wallets are selected as winners. All rarity tiers can win — higher rarity tiers receive increased odds, but every holder remains eligible.</p>
+          <div class="callout"><strong>Anyone can hit the Jackpot.</strong> Higher rarity increases your odds, but luck doesn't care about tier.</div>
+
+          <h3>Phase Jackpots</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Phase</th><th>Jackpot SOL</th><th>Jackpot $</th><th>Winners</th><th>Prize Each</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="hi">F1</td><td>17.3 SOL</td><td>~$1,552</td><td>2</td><td class="accent-cell">≈ 8.6 SOL</td></tr>
+                <tr><td class="hi">F2</td><td>18.8 SOL</td><td>~$1,687</td><td>3</td><td class="accent-cell">≈ 6.3 SOL</td></tr>
+                <tr><td class="hi">F3</td><td>21.3 SOL</td><td>~$1,912</td><td>4</td><td class="accent-cell">≈ 5.3 SOL</td></tr>
+                <tr><td class="hi">F4</td><td>26.1 SOL</td><td>~$2,346</td><td>5</td><td class="accent-cell">≈ 5.2 SOL</td></tr>
+                <tr style="background:rgba(232,255,71,0.04)">
+                  <td class="accent-cell hi">TOTAL</td>
+                  <td class="hi">83.3 SOL</td>
+                  <td class="hi">~$7,497</td>
+                  <td class="hi">14 winners</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Weighted Probability System</h3>
+          <p>The jackpot uses weighted rarity probabilities. This preserves accessibility for every holder while rewarding rarity.</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr><th>Tier</th><th>Weight</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="tier tier-legendary">Legendary</span></td><td class="accent-cell hi">12x</td></tr>
+                <tr><td><span class="tier tier-epic">Epic</span></td><td class="hi">5x</td></tr>
+                <tr><td><span class="tier tier-golden">Golden</span></td><td class="hi">3x</td></tr>
+                <tr><td><span class="tier tier-rare">Rare</span></td><td class="hi">2x</td></tr>
+                <tr><td><span class="tier tier-uncommon">Uncommon</span></td><td class="hi">1x</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. LONG TERM -->
+    <div class="doc-section" id="longterm">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">10</span>
+        <span class="section-title">Long-Term Ecosystem Vision</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <h3>Perpetual Pool</h3>
+          <p>Beyond the initial mint phases, the ecosystem is designed to support ongoing holder incentives. Secondary market royalties and ecosystem fees are reinvested into a perpetual pool distributed to long-term holders through periodic snapshots.</p>
+          <p>The system is designed to reward loyalty — holders who remain invested over time will receive preferential weighting in future distributions. The longer you hold, the more the ecosystem works in your favor.</p>
+
+          <h3>Potential Future Sources</h3>
+          <ul>
+            <li>Secondary market royalties (6.9% per sale)</li>
+            <li>Ecosystem fees and buyback systems</li>
+            <li>Community-driven expansions</li>
+          </ul>
+
+          <p>The long-term goal is to create a community that continues evolving beyond mint — where holding a Trixster is not a one-time event but an ongoing participation in the ecosystem.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. TRANSPARENCY -->
+    <div class="doc-section" id="transparency">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">11</span>
+        <span class="section-title">Transparency Philosophy</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>The project is built around transparent on-chain mechanics. Key principles include:</p>
+          <ul>
+            <li>Publicly verifiable reward structures</li>
+            <li>Public $BRIX burn tracking in real time</li>
+            <li>Transparent phase progression</li>
+            <li>On-chain distribution systems</li>
+            <li>Clear rarity allocations published at reveal</li>
+          </ul>
+          <p>Snapshot and distribution data may be published publicly for community verification purposes. Anyone should be able to independently verify the numbers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. FINAL NOTES -->
+    <div class="doc-section" id="notes">
+      <button class="section-header" onclick="toggleSection(this)">
+        <span class="section-num">12</span>
+        <span class="section-title">Final Notes</span>
+        <svg class="section-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="section-body">
+        <div class="section-inner">
+          <p>BRIX + TRIXSTER is designed as more than a traditional NFT collection. The ecosystem combines deflationary token mechanics, hidden rarity systems, phase-based progression, structured reward pools, and long-term ecosystem participation.</p>
+          <p>The project aims to create an experience driven by luck, strategy, speculation, and community interaction.</p>
+          <p>More detailed technical information, mint schedules, and launch announcements will be released through official project channels.</p>
+          <div class="callout" style="margin-top:24px; border-color:rgba(255,107,43,0.25); background:rgba(255,107,43,0.05); color:#c0a090;">
+            <strong style="color:var(--accent2)">Official Reminder:</strong> Cryptocurrency and NFT markets involve risk. Participation should always be based on personal research and individual responsibility. Nothing in this document constitutes financial advice.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ─── TOGGLE SECTION ───────────────────────────────
+  function toggleSection(btn) {
+    const section = btn.closest('.doc-section');
+    section.classList.toggle('open');
+  }
+
+  // ─── ACTIVE SIDEBAR LINK ON SCROLL ───────────────
+  const sections = document.querySelectorAll('.doc-section');
+  const links = document.querySelectorAll('.sidebar-link');
+  const scrollLine = document.getElementById('scrollLine');
+
+  function getScrollProgress() {
+    const el = document.documentElement;
+    const scrollTop = el.scrollTop || document.body.scrollTop;
+    const scrollHeight = el.scrollHeight - el.clientHeight;
+    return scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+  }
+
+  function updateActive() {
+    scrollLine.style.transform = `scaleX(${getScrollProgress()})`;
+
+    let current = '';
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 100) current = sec.id;
+    });
+
+    links.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+
+  // Smooth scroll + auto-open section
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          if (!target.classList.contains('open')) target.classList.add('open');
+          const y = target.getBoundingClientRect().top + window.scrollY - 72;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+          // Close sidebar on mobile
+          if (window.innerWidth <= 900) closeSidebar();
+        }
+      }
+    });
+  });
+
+  // ─── MOBILE SIDEBAR ──────────────────────────────
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuToggle = document.getElementById('menuToggle');
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', closeSidebar);
+
+</script>
+</body>
+</html>
