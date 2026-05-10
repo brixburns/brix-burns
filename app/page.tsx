@@ -5,31 +5,10 @@
 // 3. npm install
 // 4. npm run dev
 
-// Minimal Next.js page (App Router style)
-// Instructions:
-// 1. npx create-next-app@latest brix-site
-// 2. replace app/page.tsx with this file
-// 3. npm install
-// 4. npm run dev
-
-// Minimal Next.js page (App Router style)
-// Instructions:
-// 1. npx create-next-app@latest brix-site
-// 2. replace app/page.tsx with this file
-// 3. npm install
-// 4. npm run dev
-
-// Minimal Next.js page (App Router style)
-// Instructions:
-// 1. npx create-next-app@latest brix-site
-// 2. replace app/page.tsx with this file
-// 3. npm install
-// 4. npm run dev
-
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function useCountUp(target: number, duration = 2000) {
@@ -49,26 +28,17 @@ function useCountUp(target: number, duration = 2000) {
 
 function formatNumber(n: number) { return n.toLocaleString("en-US"); }
 
-function useLiveBurn() {
-  const [tick, setTick] = useState(96297387);
-  useEffect(() => {
-    const id = setInterval(() => {
-      const arr = new Uint8Array(1);
-      crypto.getRandomValues(arr);
-      setTick(v => v + (arr[0] % 12));
-    }, 1800);
-    return () => clearInterval(id);
-  }, []);
-  return tick;
-}
+// PRE-LAUNCH: static zeros — replace with live hooks after token launch
+const BURN_DISPLAY = "00,000,000";
+const USD_DISPLAY  = "$00,000.00";
 
 const stats = [
-  { label: "PRICE",      value: "$0.000123"   },
-  { label: "MARKET CAP", value: "$1,247,392"  },
-  { label: "SUPPLY",     value: "892,173,642" },
-  { label: "BURNED",     value: "10.82%"      },
-  { label: "HOLDERS",    value: "2,431"       },
-  { label: "",           value: ""            },
+  { label: "PRICE",      value: "$0.000000"               },
+  { label: "MARKET CAP", value: "$000,000"                },
+  { label: "SUPPLY",     value: "000,000,000"             },
+  { label: "BURNED",     value: "00.00%"                  },
+  { label: "HOLDERS",    value: "000"                     },
+  { label: "NOT",       value: "",           live: true  },
 ];
 
 // ── FAQ data ──────────────────────────────────────────────────────────────────
@@ -105,6 +75,10 @@ const FAQS = [
     q: "Is there an ongoing reward system beyond mint phases?",
     a: "Yes. $BRIX trading fees and secondary royalties from NFT sales feed a perpetual reward pool distributed via periodic snapshots. Long-term holders will benefit from a loyalty boost.",
   },
+  {
+    q: "Where can I find more details about the project?",
+    a: "All the technical details — tokenomics, mint mechanics, reward distribution, jackpot probabilities and more — are available in our full documentation at brix-burns.com/docs.html",
+  },
 ];
 
 // ── Copy icon ─────────────────────────────────────────────────────────────────
@@ -122,52 +96,26 @@ function CopyIcon({ done }: { done: boolean }) {
   );
 }
 
-// ── StatsBar ──────────────────────────────────────────────────────────────────
+// ── StatsBar — CSS animation (smooth on all browsers) ────────────────────────
 function StatsBar() {
-  const trackRef  = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const posRef    = useRef(0);
-  const rafRef    = useRef<number>(0);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const speed = 0.6;
-    const frame = () => {
-      if (!pausedRef.current) {
-        posRef.current += speed;
-        const quarter = track.scrollWidth / 4;
-        if (posRef.current >= quarter) posRef.current -= quarter;
-        track.style.transform = `translateX(-${posRef.current}px)`;
-      }
-      rafRef.current = requestAnimationFrame(frame);
-    };
-    rafRef.current = requestAnimationFrame(frame);
-    const pause  = () => { pausedRef.current = true; };
-    const resume = () => { pausedRef.current = false; };
-    const outer  = track.parentElement!;
-    outer.addEventListener("mouseenter", pause);
-    outer.addEventListener("mouseleave", resume);
-    outer.addEventListener("touchstart", pause,  { passive: true });
-    outer.addEventListener("touchend",   resume);
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      outer.removeEventListener("mouseenter", pause);
-      outer.removeEventListener("mouseleave", resume);
-      outer.removeEventListener("touchstart", pause);
-      outer.removeEventListener("touchend",   resume);
-    };
-  }, []);
-
+  const [paused, setPaused] = useState(false);
   const items = [...stats, ...stats, ...stats, ...stats];
   return (
-    <div className="stats-outer">
-      <div className="stats-track" ref={trackRef}>
+    <div
+      className="stats-outer"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+    >
+      <div className="stats-track" style={{ animationPlayState: paused ? "paused" : "running" }}>
         {items.map((s, i) => (
           <div className="stat-item" key={i}>
             <div className="s-label">{s.label || "\u00a0"}</div>
-            {s.label === "" ? (
-              <div className="s-value s-live"><span className="dot"/>LIVE</div>
+            {(s as {live?: boolean}).live ? (
+              <div className="s-value s-live"><span className="dot-red"/>LIVE</div>
+            ) : (s as {soon?: boolean}).soon ? (
+              <div className="s-value s-soon">SOON</div>
             ) : (
               <div className="s-value">{s.value}</div>
             )}
@@ -206,8 +154,8 @@ function FaqSection() {
   );
 }
 export default function BrixPage() {
-  const burnRaw   = useLiveBurn();
-  const lockedRaw = useCountUp(1187234, 2400);
+  // PRE-LAUNCH: remove these two lines and restore live hooks after token launch
+  void useCountUp; // keep import alive
   const [copied,   setCopied]   = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [counter,  setCounter]  = useState<"brix"|"usd">("brix");
@@ -226,15 +174,11 @@ export default function BrixPage() {
 
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copy = useCallback(() => {
-    navigator.clipboard.writeText("7xKX...BRiX");
+    navigator.clipboard.writeText("BRiXc0ntr4ct");
     setCopied(true);
     copyTimerRef.current = setTimeout(() => setCopied(false), 1600);
   }, []);
   useEffect(() => () => { if (copyTimerRef.current) clearTimeout(copyTimerRef.current); }, []);
-
-  const usdValue = (lockedRaw / 100).toLocaleString("en-US", {
-    minimumFractionDigits: 2, maximumFractionDigits: 2,
-  });
 
   // smooth scroll helper
   const scrollTo = (id: string) => {
@@ -393,17 +337,42 @@ export default function BrixPage() {
         }
         .stats-outer::before { left: 0;  background: linear-gradient(90deg, var(--surface), transparent); }
         .stats-outer::after  { right: 0; background: linear-gradient(-90deg, var(--surface), transparent); }
-        .stats-track { display: flex; will-change: transform; }
+        .stats-track {
+          display: flex;
+          animation: scroll-stats 28s linear infinite;
+          width: max-content;
+        }
+        @keyframes scroll-stats {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-25%); }
+        }
         .stat-item {
           flex: 0 0 auto; text-align: center;
           padding: 8px 22px; border-right: 1px solid var(--border);
         }
         .s-label { font-size: .55rem; color: var(--dim); letter-spacing: .1em; }
         .s-value { font-family: var(--font-orb); font-size: .78rem; color: var(--white); margin-top: 2px; white-space: nowrap; }
-        .s-live  { display: flex; align-items: center; gap: 5px; color: var(--green) !important; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0;
+        .s-live  { display: flex; align-items: center; gap: 5px; color: #ff3333 !important; }
+        .s-soon  { color: var(--green) !important; font-family: var(--font-orb); font-size: .78rem; margin-top: 2px; }
+        /* red dot for LIVE */
+        .dot-red { width: 6px; height: 6px; border-radius: 50%; background: #ff3333; flex-shrink: 0;
           animation: pulse 1.2s ease-in-out infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+        /* ══ LAUNCH BANNER ══ */
+        .launch-banner {
+          text-align: center;
+          padding: 8px 24px;
+          font-family: var(--font-mono); font-size: 1.5rem;
+          letter-spacing: .25em; color: var(--green);
+          border-bottom: 1px solid var(--border);
+          animation: blink-banner 1.4s ease-in-out infinite;
+          background: rgba(57,255,20,.03);
+        }
+        @keyframes blink-banner {
+          0%,100% { opacity: 1; }
+          50%     { opacity: .35; }
+        }
 
         /* ══ HERO ══ */
         .hero { padding: 60px 24px 40px; text-align: center; position: relative; }
@@ -650,6 +619,10 @@ export default function BrixPage() {
           transition: background .2s, color .2s;
         }
         .btn-connect-glow:hover { background: var(--green); color: #000; animation: none; }
+        .btn-connect-glow:disabled {
+          border-color: var(--border); color: var(--dim);
+          animation: none; cursor: not-allowed; box-shadow: none;
+        }
         @keyframes glow-btn {
           0%,100% { box-shadow: 0 0 4px rgba(57,255,20,.3); border-color: rgba(57,255,20,.7); }
           50%     { box-shadow: 0 0 16px rgba(57,255,20,.8), 0 0 30px rgba(57,255,20,.3); border-color: var(--green); }
@@ -713,7 +686,7 @@ export default function BrixPage() {
         </button>
 
         <div className="ca-badge" onClick={copy}>
-          7xKX...BRiX
+          BRiXc0ntr4ct
           <button className="copy-btn" aria-label="Copy address">
             <CopyIcon done={copied}/>
           </button>
@@ -731,8 +704,8 @@ export default function BrixPage() {
 
         <div className="nav-right-group">
           <div className="price-inline">
-            <span className="pi-num">$0.000123</span>
-            <span className="pi-change">+12.48% ↗</span>
+            <span className="pi-num">$0.000000</span>
+            <span className="pi-change">+0.00%</span>
           </div>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)}>
             {menuOpen ? "✕" : "☰"}
@@ -760,6 +733,9 @@ export default function BrixPage() {
       {/* ══ STATS BAR ══════════════════════════════════════════════════════ */}
       <StatsBar/>
 
+      {/* ══ LAUNCHING SOON BANNER ══════════════════════════════════════════ */}
+      <div className="launch-banner">[ LAUNCHING SOON ]</div>
+
       {/* ══ HERO ═══════════════════════════════════════════════════════════ */}
       <section className="hero">
         <div className="corner tl"/><div className="corner tr"/>
@@ -770,7 +746,7 @@ export default function BrixPage() {
         </h1>
       </section>
 
-      {/* ══ BURN COUNTER ═══════════════════════════════════════════════════ */}
+      {/* ══ BURN COUNTER — PRE-LAUNCH static zeros ═════════════════════════ */}
       <div className="burn-section">
         <div className="burn-tabs">
           <button className={`burn-tab${counter === "brix" ? " active-brix" : ""}`} onClick={() => flip("brix")}>
@@ -783,8 +759,8 @@ export default function BrixPage() {
         <div className={`burn-box ${counter === "brix" ? "brix-mode" : "usd-mode"}`}>
           <div className={`burn-flip${flipping ? " flipping" : ""}`}>
             {counter === "brix"
-              ? <div className="burn-value brix">{formatNumber(burnRaw)}</div>
-              : <div className="burn-value usd">${usdValue}</div>
+              ? <div className="burn-value brix">{BURN_DISPLAY}</div>
+              : <div className="burn-value usd">{USD_DISPLAY}</div>
             }
           </div>
         </div>
@@ -948,7 +924,7 @@ export default function BrixPage() {
             <div className="reward-pool-value">0.00 SOL</div>
             <div className="reward-pool-sub">LIVE · UPDATED EACH BLOCK</div>
           </div>
-          <button className="btn-connect-glow">CONNECT WALLET</button>
+          <button className="btn-connect-glow" disabled title="Minting Not Live Yet">CONNECT WALLET</button>
         </div>
 
       </div>

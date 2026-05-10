@@ -5,9 +5,12 @@ export const metadata: Metadata = {
   title: "$BRIX Burns",
   description: "Born from the blockchain, BRIX by BRIX. 3,333 unique NFTs on Solana — forged in fire, fueled by $BRIX.",
   icons: {
-    icon: "/favicon.svg",
-    apple: "/favicon.svg",
-  },
+  icon: [
+    { url: "/favicon.svg", type: "image/svg+xml" },
+    { url: "/favicon.png", type: "image/png" },
+  ],
+  apple: "/favicon.png",
+},
 };
 
 export default function RootLayout({
