@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
     apple: [
       {
-        url: "/apple-touch-v2-icon.png",
+        url: "/apple-touch-v3-icon.png",
         sizes: "180x180",
         type: "image/png",
       },
@@ -65,7 +65,7 @@ export default function RootLayout({
   <link
     rel="apple-touch-icon"
     sizes="180x180"
-    href="/apple-touch-v2-icon.png"
+    href="/apple-touch-v3-icon.png"
   />
 </head>
 
