@@ -681,7 +681,7 @@ export default function BrixPage() {
       {/* ══ NAV ════════════════════════════════════════════════════════════ */}
       <nav id="top">
         <button className="nav-logo" onClick={() => scrollTo("top")}>
-          <Image src="/favicon.ico" alt="$BRIX" width={26} height={26} priority/>
+          <Image src="/favicon.svg" alt="$BRIX" width={26} height={26} priority/>
           $BRIX
         </button>
 
