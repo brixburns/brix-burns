@@ -770,7 +770,7 @@ export default function BrixPage() {
       <div className="tagline">
         <div className="tl-main">A <span className="tw">SYSTEM</span> THAT REDUCES ITSELF INTO VALUE.</div>
         <div className="tl-cta">
-          <a href="#" className="btn btn-primary">GET $BRIX &nbsp;›</a>
+           <a href="#" className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
           <a href="https://x.com/BRIX_burns" target="_blank" rel="noopener noreferrer" className="btn btn-outline">FOLLOW &nbsp;<img src="/logox.svg" alt="X" style={{width:"14px",height:"14px",verticalAlign:"middle",opacity:.85}}/></a>
         </div>
         <div className="tl-sub">MINTING FEEDS THE <span className="tw">REWARD</span> POOL.</div>
@@ -815,7 +815,7 @@ export default function BrixPage() {
 
       {/* ══ CTA ════════════════════════════════════════════════════════════ */}
       <div className="cta-row">
-        <a href="#" className="btn btn-primary">GET $BRIX &nbsp;›</a>
+        <a href="#" className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
         <a href="https://x.com/BRIX_burns" target="_blank" rel="noopener noreferrer" className="btn btn-outline">FOLLOW &nbsp;<img src="/logox.svg" alt="X" style={{width:"14px",height:"14px",verticalAlign:"middle",opacity:.85}}/></a>
       </div>
 
