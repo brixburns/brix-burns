@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import WalletContextProvider from "./WalletContextProvider";
+ 
 export const metadata: Metadata = {
   title: "$BRIX Burns",
   description:
     "Born from the blockchain, $BRIX by $BRIX. 3,333 unique NFTs on Solana — forged in fire, fueled by $BRIX.",
 };
-
+ 
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,7 +19,10 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body>{children}</body>
+      <body>
+        <WalletContextProvider>{children}</WalletContextProvider>
+      </body>
     </html>
   );
 }
+ 
