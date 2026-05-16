@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
@@ -21,7 +20,9 @@ export default function WalletContextProvider({
   children: React.ReactNode;
 }) {
   const endpoint = useMemo(() => clusterApiUrl(NETWORK), []);
-  const wallets  = useMemo(() => [new PhantomWalletAdapter()], []);
+  // Phantom (and other Solana wallets) auto-register via the Wallet Standard.
+  // No need to instantiate adapter classes manually — they're auto-detected.
+  const wallets  = useMemo(() => [], []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
