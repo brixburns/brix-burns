@@ -567,7 +567,7 @@ export default function BrixPage() {
           <div className="progress-track"><div className="progress-fill"/></div>
           <div className="progress-label">0 / 3333</div>
           <div className="mint-price-box">
-            <div className="mint-price-main">F1 PRICE &nbsp;<strong>0.05 SOL</strong></div>
+            <div className="mint-price-main">F1 PRICE &nbsp;<strong>0.05 SOL</strong><span className="mint-price-early">&nbsp;/ 0 SOL EARLY ACCESS</span></div>
             <div className="mint-price-sub">REQUIRES 25K $BRIX BURN</div>
           </div>
           <div className="phase-rows">

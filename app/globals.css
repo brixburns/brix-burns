@@ -303,6 +303,7 @@ nav {
 .mint-price-box { border: 1px solid var(--border); padding: 8px 12px; margin-bottom: 12px; line-height: 1.6; }
 .mint-price-main { font-size: .7rem; color: var(--dim); }
 .mint-price-main strong { color: var(--white); font-size: .78rem; }
+.mint-price-early { font-size: .6rem; color: var(--gold); opacity: .7; }
 .mint-price-sub  { font-size: .62rem; color: var(--dim); }
 
 .reward-pool-box { border: 1px solid var(--border); padding: 8px 12px; margin-bottom: 12px; line-height: 1.6; background: rgba(245,196,0,.03); }
