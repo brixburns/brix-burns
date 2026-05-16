@@ -434,7 +434,7 @@ export default function MintButton() {
           try {
             const limitGuard = candyGuard?.guards?.mintLimit;
             const limit = limitGuard?.__option === "Some" ? Number(limitGuard.value.limit) : null;
-            if (limit !== null && findMintCounterPda && safeFetchMintCounter) {
+            if (limit !== null && findMintCounterPda && safeFetchMintCounter && candyGuard) {
               const counterPda = findMintCounterPda(umi, {
                 id:           1,
                 user:         umi.identity.publicKey,
