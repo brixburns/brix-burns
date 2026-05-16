@@ -484,9 +484,12 @@ export default function MintButton() {
   // ── Non connesso ─────────────────────────────────────────────────────────────
   if (!wallet.connected) {
     return (
-      <button className="btn-connect-glow" onClick={() => setVisible(true)}>
-        CONNECT WALLET
-      </button>
+      <div style={{ width: "100%" }}>
+        <button className="btn-connect-glow" disabled style={{ width: "100%", opacity: 0.4, cursor: "not-allowed" }}>
+          CONNECT WALLET
+        </button>
+        <div className="mint-not-live">— MINT NOT LIVE YET —</div>
+      </div>
     );
   }
 
