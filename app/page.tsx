@@ -2,14 +2,12 @@
 // Mission-driven layout: burn is the protagonist, NFTs are the mechanism.
 //
 // ═══════════════════════════════════════════════════════════════════════════
-// PRE-LAUNCH MODE — replace these constants when token goes live:
-//   1. BRIX_BURNED / BURN_PERCENT / BURN_USD → wire to live RPC tracker
-//   2. STATS array → replace live=true / soon dot, real numbers
-//   3. CA "BRiXc0ntr4ct" → real contract address
-//   4. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
-//   5. MANTRA_TAIL → flip from "EVERY MINT GETS US CLOSER." to mint-phase tail,
-//      then to "" after mint ends (only "THE GOAL IS ZERO." remains)
-//   6. TOP_BURNERS_DATA → wire to live leaderboard backend
+// PRE-LAUNCH MODE — at launch, change only these things:
+//   1. TOKEN_MINT → real $BRIX address (live tracker auto-wires everything)
+//   2. CA "BRiXc0ntr4ct" → real contract address
+//   3. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
+//   4. MANTRA_TAIL → "EVERY MINT GETS US CLOSER." then "" post-mint
+//   5. TOP_BURNERS_DATA → wire to live leaderboard backend
 // ═══════════════════════════════════════════════════════════════════════════
 
 "use client";
@@ -24,27 +22,118 @@ import MintButton from "./MintButton";
 // Post-mint: set to "" to display only "THE GOAL IS ZERO." (no tail).
 const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
-// ── BURN COUNTER (placeholder, wire to live tracker post-launch) ─────────────
-const BRIX_BURNED   = "00,000,000";       // tokens
-const BURN_PERCENT  = "00.00%";           // of supply
-const BURN_USD      = "$00,000.00";       // USD value
+// ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
+// ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
+const TOKEN_MINT     = "3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw";
+const INITIAL_SUPPLY = 1_000_000_000;
+const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT = 90;
+const REFRESH_MS     = 60_000; // refresh ogni 60s
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ── EXTERNAL LINKS ───────────────────────────────────────────────────────────
 const GET_BRIX_LINK = "#";  // → "https://pump.fun/coin/<MINT_ADDRESS>" at launch
 const X_LINK        = "https://x.com/BRIX_burns";
 
-// ── STATS BAR ────────────────────────────────────────────────────────────────
+// ── STATS BAR TYPE ────────────────────────────────────────────────────────────
 type StatItem = { label: string; value: string; live?: boolean };
-const stats: StatItem[] = [
-  { label: "PRICE",        value: "$0.000000"     },
-  { label: "MARKET CAP",   value: "$000,000"      },
-  { label: "SUPPLY",       value: "1,000,000,000" },
-  { label: "BURNED",       value: "00.00%"        },
-  { label: "TARGET BURN",  value: "90%"           },
-  { label: "HOLDERS",      value: "000"           },
-  { label: "STATUS",       value: "",  live: true },
-];
+
+// ── NUMBER FORMATTERS ─────────────────────────────────────────────────────────
+function fmtTokens(n: number): string {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+function fmtPrice(n: number): string {
+  if (n === 0)      return "$0.000000";
+  if (n < 0.000001) return `$${n.toExponential(2)}`;
+  if (n < 0.001)    return `$${n.toFixed(6)}`;
+  if (n < 1)        return `$${n.toFixed(4)}`;
+  return `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+}
+function fmtUsd(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(2)}B`;
+  if (n >= 1_000_000)     return `$${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000)         return `$${(n / 1_000).toFixed(1)}K`;
+  return `$${n.toFixed(2)}`;
+}
+function fmtPct(n: number): string { return `${n.toFixed(2)}%`; }
+
+// ── LIVE TRACKER HOOK ─────────────────────────────────────────────────────────
+type TrackerData = {
+  burned: string; burnPct: number; burnPctStr: string;
+  burnUsd: string; price: string; mcap: string;
+  supply: string; holders: string; loading: boolean;
+};
+const TRACKER_DEFAULT: TrackerData = {
+  burned: "00,000,000", burnPct: 0, burnPctStr: "00.00%",
+  burnUsd: "$00,000.00", price: "$0.000000", mcap: "$000,000",
+  supply: "1,000,000,000", holders: "—", loading: true,
+};
+
+function useLiveTracker(): TrackerData {
+  const [data, setData] = useState<TrackerData>(TRACKER_DEFAULT);
+
+  const load = useCallback(async () => {
+    try {
+      // 1. Supply corrente → tokens bruciati
+      const supplyRes  = await fetch(HELIUS_RPC, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: "supply",
+          method: "getTokenSupply", params: [TOKEN_MINT] }),
+      });
+      const supplyJson = await supplyRes.json();
+      const currentSupply = Number(supplyJson?.result?.value?.uiAmount ?? INITIAL_SUPPLY);
+      const burned  = Math.max(0, INITIAL_SUPPLY - currentSupply);
+      const burnPct = (burned / INITIAL_SUPPLY) * 100;
+
+      // 2. Prezzo + market cap da DexScreener (no API key)
+      let priceNum = 0, mcapNum = 0;
+      try {
+        const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+        const dexJson = await dexRes.json();
+        type DexPair = { priceUsd?: string; marketCap?: number; fdv?: number; liquidity?: { usd?: number } };
+        const pairs: DexPair[] = dexJson?.pairs ?? [];
+        const pair = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+        priceNum = pair?.priceUsd ? Number(pair.priceUsd) : 0;
+        mcapNum  = pair?.marketCap ?? pair?.fdv ?? 0;
+      } catch { /* price non disponibile */ }
+
+      // 3. Holders via Helius getTokenAccounts
+      let holdersNum = 0;
+      try {
+        const holdRes  = await fetch(HELIUS_RPC, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
+            method: "getTokenAccounts",
+            params: { mint: TOKEN_MINT, limit: 1, options: { showZeroBalance: false } } }),
+        });
+        const holdJson = await holdRes.json();
+        holdersNum = holdJson?.result?.total ?? 0;
+      } catch { /* holders non disponibili */ }
+
+      setData({
+        burned:     fmtTokens(burned),
+        burnPct,
+        burnPctStr: fmtPct(burnPct),
+        burnUsd:    fmtUsd(priceNum * burned),
+        price:      fmtPrice(priceNum),
+        mcap:       fmtUsd(mcapNum),
+        supply:     fmtTokens(currentSupply),
+        holders:    holdersNum > 0 ? fmtTokens(holdersNum) : "—",
+        loading:    false,
+      });
+    } catch {
+      setData(prev => ({ ...prev, loading: false }));
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+    const id = setInterval(load, REFRESH_MS);
+    return () => clearInterval(id);
+  }, [load]);
+
+  return data;
+}
 
 // ── FAQ DATA ─────────────────────────────────────────────────────────────────
 const FAQS = [
@@ -120,7 +209,7 @@ function CopyIcon({ done }: { done: boolean }) {
 }
 
 // ── STATS BAR ────────────────────────────────────────────────────────────────
-function StatsBar() {
+function StatsBar({ stats }: { stats: StatItem[] }) {
   const [paused, setPaused] = useState(false);
   const items = [...stats, ...stats, ...stats, ...stats];
   return (
@@ -297,6 +386,17 @@ export default function BrixPage() {
   const [safetyOpen,  setSafetyOpen]  = useState(false);
   const [safetyAcked, setSafetyAcked] = useState(false);
 
+  const tracker = useLiveTracker();
+  const liveStats: StatItem[] = [
+    { label: "PRICE",       value: tracker.price },
+    { label: "MARKET CAP",  value: tracker.mcap },
+    { label: "SUPPLY",      value: tracker.supply },
+    { label: "BURNED",      value: tracker.burnPctStr },
+    { label: "TARGET BURN", value: `${TARGET_PERCENT}%` },
+    { label: "HOLDERS",     value: tracker.holders },
+    { label: "STATUS",      value: "", live: true },
+  ];
+
   useEffect(() => {
     try {
       if (localStorage.getItem("brix_safety_acked") === "1") setSafetyAcked(true);
@@ -384,7 +484,7 @@ export default function BrixPage() {
         </div>
       </nav>
 
-      <StatsBar/>
+      <StatsBar stats={liveStats}/>
 
       <div className="launch-banner">[ LAUNCHING SOON ]</div>
 
@@ -420,15 +520,15 @@ export default function BrixPage() {
         </div>
         <div className={`burn-box ${counter}-mode`}>
           <div className={`burn-flip${flipping ? " flipping" : ""}`}>
-            {counter === "brix"    && <div className="burn-value brix">{BRIX_BURNED}</div>}
-            {counter === "percent" && <div className="burn-value percent">{BURN_PERCENT}</div>}
-            {counter === "usd"     && <div className="burn-value usd">{BURN_USD}</div>}
+            {counter === "brix"    && <div className="burn-value brix">{tracker.burned}</div>}
+            {counter === "percent" && <div className="burn-value percent">{tracker.burnPctStr}</div>}
+            {counter === "usd"     && <div className="burn-value usd">{tracker.burnUsd}</div>}
           </div>
         </div>
 
         <div className="burn-progress-wrap">
           <div className="burn-progress-track">
-            <div className="burn-progress-fill" style={{ width: `${0}%` }}/>
+            <div className="burn-progress-fill" style={{ width: `${Math.min(tracker.burnPct, 100)}%` }}/>
             <div className="burn-progress-target" title="Target: 90%"/>
           </div>
           <div className="burn-progress-labels">
