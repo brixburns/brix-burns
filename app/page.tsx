@@ -61,12 +61,16 @@ function fmtPct(n: number): string { return `${n.toFixed(2)}%`; }
 type TrackerData = {
   burned: string; burnPct: number; burnPctStr: string;
   burnUsd: string; price: string; mcap: string;
-  supply: string; holders: string; loading: boolean;
+  supply: string; holders: string;
+  priceChange24h: string; priceChangePositive: boolean;
+  loading: boolean;
 };
 const TRACKER_DEFAULT: TrackerData = {
   burned: "00,000,000", burnPct: 0, burnPctStr: "00.00%",
   burnUsd: "$00,000.00", price: "$0.000000", mcap: "$000,000",
-  supply: "1,000,000,000", holders: "—", loading: true,
+  supply: "1,000,000,000", holders: "—",
+  priceChange24h: "+0.00%", priceChangePositive: true,
+  loading: true,
 };
 
 function useLiveTracker(): TrackerData {
@@ -85,53 +89,70 @@ function useLiveTracker(): TrackerData {
       const burned  = Math.max(0, INITIAL_SUPPLY - currentSupply);
       const burnPct = (burned / INITIAL_SUPPLY) * 100;
 
-      // 2. Prezzo + market cap da DexScreener (no API key)
-      let priceNum = 0, mcapNum = 0;
+      // 2. Prezzo + market cap + 24h change da DexScreener (no API key)
+      let priceNum = 0, mcapNum = 0, change24h = 0;
       try {
         const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
         const dexJson = await dexRes.json();
-        type DexPair = { priceUsd?: string; marketCap?: number; fdv?: number; liquidity?: { usd?: number } };
+        type DexPair = {
+          priceUsd?: string; marketCap?: number; fdv?: number;
+          liquidity?: { usd?: number };
+          priceChange?: { h24?: number };
+        };
         const pairs: DexPair[] = dexJson?.pairs ?? [];
         const pair = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
         priceNum = pair?.priceUsd ? Number(pair.priceUsd) : 0;
         mcapNum  = pair?.marketCap ?? pair?.fdv ?? 0;
+        change24h = pair?.priceChange?.h24 ?? 0;
       } catch { /* price non disponibile */ }
 
-      // 3. Holders via Helius getTokenAccounts (paginato se > 1000)
+      // 3. Holders: Solscan public API (count esatto, 1 call) con fallback Helius
       let holdersStr = "—";
       try {
-        let total = 0;
-        let cursor: string | null = null;
-        let pages = 0;
-        do {
-          const holdRes: Response = await fetch(HELIUS_RPC, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
-              method: "getTokenAccounts",
-              params: { mint: TOKEN_MINT, limit: 1000, cursor,
-                options: { showZeroBalance: false } } }),
-          });
-          const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
-          const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
-          total  += accounts.length;
-          cursor  = holdJson?.result?.cursor ?? null;
-          pages++;
-          // max 5 pagine (5k holders) per non bloccare il browser
-          if (pages >= 5) { if (cursor) holdersStr = `${fmtTokens(total)}+`; break; }
-        } while (cursor);
-        if (!holdersStr.includes("+")) holdersStr = total > 0 ? fmtTokens(total) : "—";
-      } catch { /* holders non disponibili */ }
+        const solRes  = await fetch(
+          `https://public-api.solscan.io/token/holders?tokenAddress=${TOKEN_MINT}&limit=1&offset=0`
+        );
+        const solJson: { total?: number } = await solRes.json();
+        if (typeof solJson?.total === "number" && solJson.total > 0) {
+          holdersStr = fmtTokens(solJson.total);
+        } else {
+          throw new Error("solscan no total");
+        }
+      } catch {
+        // Fallback: Helius pagination completa (senza cap)
+        try {
+          let total = 0;
+          let cursor: string | null = null;
+          do {
+            const holdRes: Response = await fetch(HELIUS_RPC, {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
+                method: "getTokenAccounts",
+                params: { mint: TOKEN_MINT, limit: 1000, cursor,
+                  options: { showZeroBalance: false } } }),
+            });
+            const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
+            const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
+            total  += accounts.length;
+            cursor  = holdJson?.result?.cursor ?? null;
+          } while (cursor);
+          if (total > 0) holdersStr = fmtTokens(total);
+        } catch { /* holders non disponibili */ }
+      }
 
+      const changeSign = change24h >= 0 ? "+" : "";
       setData({
-        burned:     fmtTokens(burned),
+        burned:              fmtTokens(burned),
         burnPct,
-        burnPctStr: fmtPct(burnPct),
-        burnUsd:    fmtUsd(priceNum * burned),
-        price:      fmtPrice(priceNum),
-        mcap:       fmtUsd(mcapNum),
-        supply:     fmtTokens(currentSupply),
-        holders:    holdersStr,
-        loading:    false,
+        burnPctStr:          fmtPct(burnPct),
+        burnUsd:             fmtUsd(priceNum * burned),
+        price:               fmtPrice(priceNum),
+        mcap:                fmtUsd(mcapNum),
+        supply:              fmtTokens(currentSupply),
+        holders:             holdersStr,
+        priceChange24h:      `${changeSign}${change24h.toFixed(2)}%`,
+        priceChangePositive: change24h >= 0,
+        loading:             false,
       });
     } catch {
       setData(prev => ({ ...prev, loading: false }));
@@ -475,8 +496,10 @@ export default function BrixPage() {
 
         <div className="nav-right-group">
           <div className="price-inline">
-            <span className="pi-num">$0.000000</span>
-            <span className="pi-change">+0.00%</span>
+            <span className="pi-num">{tracker.price}</span>
+            <span className="pi-change" style={{ color: tracker.priceChangePositive ? "var(--green)" : "var(--orange)" }}>
+              {tracker.priceChange24h}
+            </span>
           </div>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"}>
             {menuOpen ? "✕" : "☰"}
