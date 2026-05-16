@@ -24,11 +24,12 @@ const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 // ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = "3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw";
+const TOKEN_MINT     = "FsCTZgJfZpaLKSRkEVreVLVodtU2m1Mqte3A7LiN7gPD";
 const INITIAL_SUPPLY = 1_000_000_000;
 const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
-const TARGET_PERCENT = 90;
-const REFRESH_MS     = 60_000; // refresh ogni 60s
+const TARGET_PERCENT  = 90;
+const REFRESH_BURN_MS = 30_000;  // burn counter: ogni 30s
+const REFRESH_SLOW_MS = 120_000; // prezzo/holders: ogni 2 min
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── EXTERNAL LINKS ───────────────────────────────────────────────────────────
@@ -79,9 +80,9 @@ const TRACKER_DEFAULT: TrackerData = {
 function useLiveTracker(): TrackerData {
   const [data, setData] = useState<TrackerData>(TRACKER_DEFAULT);
 
-  const load = useCallback(async () => {
+  // ── FAST: supply/burn ogni 30s ───────────────────────────────────────────
+  const loadBurn = useCallback(async () => {
     try {
-      // 1. Supply corrente → tokens bruciati
       const supplyRes  = await fetch(HELIUS_RPC, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: "supply",
@@ -91,82 +92,88 @@ function useLiveTracker(): TrackerData {
       const currentSupply = Number(supplyJson?.result?.value?.uiAmount ?? INITIAL_SUPPLY);
       const burned  = Math.max(0, INITIAL_SUPPLY - currentSupply);
       const burnPct = (burned / INITIAL_SUPPLY) * 100;
-
-      // 2. Prezzo + market cap + 24h change da DexScreener (no API key)
-      let priceNum = 0, mcapNum = 0, change24h = 0;
-      try {
-        const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
-        const dexJson = await dexRes.json();
-        type DexPair = {
-          priceUsd?: string; marketCap?: number; fdv?: number;
-          liquidity?: { usd?: number };
-          priceChange?: { h24?: number };
-        };
-        const pairs: DexPair[] = dexJson?.pairs ?? [];
-        const pair = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
-        priceNum = pair?.priceUsd ? Number(pair.priceUsd) : 0;
-        mcapNum  = pair?.marketCap ?? pair?.fdv ?? 0;
-        change24h = pair?.priceChange?.h24 ?? 0;
-      } catch { /* price non disponibile */ }
-
-      // 3. Holders: Solscan public API (count esatto, 1 call) con fallback Helius
-      let holdersStr = "—";
-      try {
-        const solRes  = await fetch(
-          `https://public-api.solscan.io/token/holders?tokenAddress=${TOKEN_MINT}&limit=1&offset=0`
-        );
-        const solJson: { total?: number } = await solRes.json();
-        if (typeof solJson?.total === "number" && solJson.total > 0) {
-          holdersStr = fmtTokens(solJson.total);
-        } else {
-          throw new Error("solscan no total");
-        }
-      } catch {
-        // Fallback: Helius pagination completa (senza cap)
-        try {
-          let total = 0;
-          let cursor: string | null = null;
-          do {
-            const holdRes: Response = await fetch(HELIUS_RPC, {
-              method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
-                method: "getTokenAccounts",
-                params: { mint: TOKEN_MINT, limit: 1000, cursor,
-                  options: { showZeroBalance: false } } }),
-            });
-            const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
-            const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
-            total  += accounts.length;
-            cursor  = holdJson?.result?.cursor ?? null;
-          } while (cursor);
-          if (total > 0) holdersStr = fmtTokens(total);
-        } catch { /* holders non disponibili */ }
-      }
-
-      const changeSign = change24h >= 0 ? "+" : "";
-      setData({
-        burned:              fmtTokens(burned),
+      setData(prev => ({
+        ...prev,
+        burned:    fmtTokens(burned),
         burnPct,
-        burnPctStr:          fmtPct(burnPct),
-        burnUsd:             fmtUsd(priceNum * burned),
-        price:               fmtPrice(priceNum),
-        mcap:                fmtUsd(mcapNum),
-        supply:              fmtTokens(currentSupply),
-        holders:             holdersStr,
-        priceChange24h:      `${changeSign}${change24h.toFixed(2)}%`,
-        priceChangePositive: change24h >= 0,
-        loading:             false,
-      });
+        burnPctStr: fmtPct(burnPct),
+        burnUsd:   fmtUsd((prev.price ? Number(prev.price.replace(/[$,]/g, "")) : 0) * burned),
+        supply:    fmtTokens(currentSupply),
+        loading:   false,
+      }));
+    } catch { setData(prev => ({ ...prev, loading: false })); }
+  }, []);
+
+  // ── SLOW: prezzo / holders ogni 2 min ────────────────────────────────────
+  const loadSlow = useCallback(async () => {
+    // Prezzo + market cap + 24h change
+    let priceNum = 0, mcapNum = 0, change24h = 0;
+    try {
+      const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+      const dexJson = await dexRes.json();
+      type DexPair = {
+        priceUsd?: string; marketCap?: number; fdv?: number;
+        liquidity?: { usd?: number };
+        priceChange?: { h24?: number };
+      };
+      const pairs: DexPair[] = dexJson?.pairs ?? [];
+      const pair = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+      priceNum  = pair?.priceUsd ? Number(pair.priceUsd) : 0;
+      mcapNum   = pair?.marketCap ?? pair?.fdv ?? 0;
+      change24h = pair?.priceChange?.h24 ?? 0;
+    } catch { /* price non disponibile */ }
+
+    // Holders: Solscan primary, Helius fallback
+    let holdersStr = "—";
+    try {
+      const solRes  = await fetch(
+        `https://public-api.solscan.io/token/holders?tokenAddress=${TOKEN_MINT}&limit=1&offset=0`
+      );
+      const solJson: { total?: number } = await solRes.json();
+      if (typeof solJson?.total === "number" && solJson.total > 0) {
+        holdersStr = fmtTokens(solJson.total);
+      } else {
+        throw new Error("solscan no total");
+      }
     } catch {
-      setData(prev => ({ ...prev, loading: false }));
+      try {
+        let total = 0;
+        let cursor: string | null = null;
+        do {
+          const holdRes: Response = await fetch(HELIUS_RPC, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
+              method: "getTokenAccounts",
+              params: { mint: TOKEN_MINT, limit: 1000, cursor,
+                options: { showZeroBalance: false } } }),
+          });
+          const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
+          const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
+          total  += accounts.length;
+          cursor  = holdJson?.result?.cursor ?? null;
+        } while (cursor);
+        if (total > 0) holdersStr = fmtTokens(total);
+      } catch { /* holders non disponibili */ }
     }
+
+    const changeSign = change24h >= 0 ? "+" : "";
+    setData(prev => ({
+      ...prev,
+      price:               fmtPrice(priceNum),
+      mcap:                fmtUsd(mcapNum),
+      holders:             holdersStr,
+      priceChange24h:      `${changeSign}${change24h.toFixed(2)}%`,
+      priceChangePositive: change24h >= 0,
+    }));
   }, []);
 
   useEffect(() => {
-    load();
-    const id = setInterval(load, REFRESH_MS);
-    return () => clearInterval(id);
-  }, [load]);
+    loadBurn();
+    loadSlow();
+    const fastId = setInterval(loadBurn, REFRESH_BURN_MS);
+    const slowId = setInterval(loadSlow, REFRESH_SLOW_MS);
+    return () => { clearInterval(fastId); clearInterval(slowId); };
+  }, [loadBurn, loadSlow]);
 
   return data;
 }
