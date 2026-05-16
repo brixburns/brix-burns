@@ -35,6 +35,9 @@ const REFRESH_MS     = 60_000; // refresh ogni 60s
 const GET_BRIX_LINK = "#";  // → "https://pump.fun/coin/<MINT_ADDRESS>" at launch
 const X_LINK        = "https://x.com/BRIX_burns";
 
+// ── TOP BURNERS WORKER URL ────────────────────────────────────────────────────
+const TOP_BURNERS_URL = "https://brix-top-burners.420losrs.workers.dev/top-burners";
+
 // ── STATS BAR TYPE ────────────────────────────────────────────────────────────
 type StatItem = { label: string; value: string; live?: boolean };
 
@@ -220,11 +223,40 @@ const FAQS = [
   },
 ];
 
-// ── TOP BURNERS — placeholder data, wire to live backend ─────────────────────
-type BurnerEntry = { rank: number; wallet: string; burned: string; reward: string };
-const TOP_BURNERS_DATA: BurnerEntry[] = [
-  // Empty pre-launch; populate from live leaderboard script after token launch
-];
+// ── TOP BURNERS — live leaderboard from Cloudflare Worker ────────────────────
+type BurnerEntry = { rank: number; wallet: string; burned: string };
+
+type WorkerBurner = { rank: number; wallet: string; burned: number };
+
+function useTopBurners() {
+  const [burners, setBurners] = useState<BurnerEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res  = await fetch(TOP_BURNERS_URL);
+        const data: WorkerBurner[] = await res.json();
+        if (!cancelled) {
+          setBurners(data.map(d => ({
+            rank:   d.rank,
+            wallet: d.wallet,
+            burned: fmtTokens(d.burned),
+          })));
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    const id = setInterval(load, 60_000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  return { burners, loading };
+}
 
 // ── ICONS ────────────────────────────────────────────────────────────────────
 function CopyIcon({ done }: { done: boolean }) {
@@ -299,18 +331,20 @@ function FaqSection() {
 // ── TOP BURNERS SECTION ──────────────────────────────────────────────────────
 function TopBurnersSection() {
   const [expanded, setExpanded] = useState(false);
+  const { burners, loading } = useTopBurners();
 
-  // Placeholder rows — replace with live leaderboard data after token launch
-  const top5: BurnerEntry[] = TOP_BURNERS_DATA.length > 0
-    ? TOP_BURNERS_DATA.slice(0, 5)
+  const empty = !loading && burners.length === 0;
+
+  const top5: BurnerEntry[] = burners.length > 0
+    ? burners.slice(0, 5)
     : Array.from({ length: 5 }, (_, i) => ({
-        rank: i + 1, wallet: "—", burned: "—", reward: i < 5 ? "2 NFT" : "1 NFT",
+        rank: i + 1, wallet: "—", burned: "—",
       }));
 
-  const top6to20: BurnerEntry[] = TOP_BURNERS_DATA.length > 0
-    ? TOP_BURNERS_DATA.slice(5, 20)
+  const top6to20: BurnerEntry[] = burners.length > 0
+    ? burners.slice(5, 20)
     : Array.from({ length: 15 }, (_, i) => ({
-        rank: i + 6, wallet: "—", burned: "—", reward: "1 NFT",
+        rank: i + 6, wallet: "—", burned: "—",
       }));
 
   return (
@@ -379,8 +413,10 @@ function TopBurnersSection() {
       )}
 
       <div className="tb-footer">
-        <span className="tb-footer-status">⚡ LEADERBOARD ACTIVATES AT TOKEN LAUNCH</span>
-        <span className="tb-footer-update">UPDATED EVERY 30 MIN</span>
+        <span className="tb-footer-status">
+          {loading ? "⏳ LOADING LEADERBOARD…" : empty ? "⚡ LEADERBOARD ACTIVATES AT TOKEN LAUNCH" : "🔴 LIVE LEADERBOARD"}
+        </span>
+        <span className="tb-footer-update">UPDATED EVERY 60 SEC</span>
       </div>
     </section>
   );
