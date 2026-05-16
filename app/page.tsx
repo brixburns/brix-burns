@@ -97,17 +97,29 @@ function useLiveTracker(): TrackerData {
         mcapNum  = pair?.marketCap ?? pair?.fdv ?? 0;
       } catch { /* price non disponibile */ }
 
-      // 3. Holders via Helius getTokenAccounts
-      let holdersNum = 0;
+      // 3. Holders via Helius getTokenAccounts (paginato se > 1000)
+      let holdersStr = "—";
       try {
-        const holdRes  = await fetch(HELIUS_RPC, {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
-            method: "getTokenAccounts",
-            params: { mint: TOKEN_MINT, limit: 1, options: { showZeroBalance: false } } }),
-        });
-        const holdJson = await holdRes.json();
-        holdersNum = holdJson?.result?.total ?? 0;
+        let total = 0;
+        let cursor: string | null = null;
+        let pages = 0;
+        do {
+          const holdRes: Response = await fetch(HELIUS_RPC, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
+              method: "getTokenAccounts",
+              params: { mint: TOKEN_MINT, limit: 1000, cursor,
+                options: { showZeroBalance: false } } }),
+          });
+          const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
+          const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
+          total  += accounts.length;
+          cursor  = holdJson?.result?.cursor ?? null;
+          pages++;
+          // max 5 pagine (5k holders) per non bloccare il browser
+          if (pages >= 5) { if (cursor) holdersStr = `${fmtTokens(total)}+`; break; }
+        } while (cursor);
+        if (!holdersStr.includes("+")) holdersStr = total > 0 ? fmtTokens(total) : "—";
       } catch { /* holders non disponibili */ }
 
       setData({
@@ -118,7 +130,7 @@ function useLiveTracker(): TrackerData {
         price:      fmtPrice(priceNum),
         mcap:       fmtUsd(mcapNum),
         supply:     fmtTokens(currentSupply),
-        holders:    holdersNum > 0 ? fmtTokens(holdersNum) : "—",
+        holders:    holdersStr,
         loading:    false,
       });
     } catch {
