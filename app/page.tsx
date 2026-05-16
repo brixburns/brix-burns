@@ -568,13 +568,13 @@ export default function BrixPage() {
           <div className="progress-label">0 / 3333</div>
           <div className="mint-price-box">
             <div className="mint-price-main">F1 PRICE &nbsp;<strong>0.05 SOL</strong></div>
-            <div className="mint-price-sub">REQUIRES 20K $BRIX BURN</div>
+            <div className="mint-price-sub">REQUIRES 25K $BRIX BURN</div>
           </div>
           <div className="phase-rows">
             {[
-              ["F1","0/690","20K $BRIX","SOON"],
-              ["F2","0/750","40K $BRIX","—"],
-              ["F3","0/850","80K $BRIX","—"],
+              ["F1","0/690","25K $BRIX","SOON"],
+              ["F2","0/750","50K $BRIX","—"],
+              ["F3","0/850","100K $BRIX","—"],
               ["F4","0/1043","150K $BRIX","—"],
             ].map(([name, prog, burn, status]) => (
               <div className="phase-row" key={name}>
