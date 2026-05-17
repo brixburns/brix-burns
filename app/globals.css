@@ -378,19 +378,26 @@ nav {
 .tb-table {
   width: 100%; border-collapse: collapse;
   font-family: var(--font-mono); font-size: .7rem;
+  table-layout: fixed;
 }
 .tb-table thead tr { border-bottom: 1px solid var(--border); }
 .tb-table th {
   padding: 10px 12px; text-align: left;
   font-size: .55rem; letter-spacing: .15em;
   color: var(--orange); font-weight: bold;
+  overflow: hidden;
 }
 .tb-table td {
   padding: 10px 12px; border-bottom: 1px solid var(--border);
   color: var(--dim);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .tb-table tr:last-child td { border-bottom: none; }
-.tb-rank { font-family: var(--font-orb); color: var(--gold); width: 40px; }
+/* Larghezze colonne fisse: # | WALLET | $BRIX BURNED | AIRDROP */
+.tb-table th:nth-child(1), .tb-table td:nth-child(1) { width: 44px; }
+.tb-table th:nth-child(3), .tb-table td:nth-child(3) { width: 26%; text-align: right; }
+.tb-table th:nth-child(4), .tb-table td:nth-child(4) { width: 72px; text-align: right; }
+.tb-rank  { font-family: var(--font-orb); color: var(--gold); }
 .tb-wallet { color: var(--white); font-family: var(--font-mono); }
 .tb-burned { color: var(--orange); text-align: right; }
 .tb-reward { color: var(--gold); text-align: right; font-weight: bold; }
