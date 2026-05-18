@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 import MintButton from "./MintButtons/MintButtonF1b-devnet";
+import BurnButton from "./BurnButton";
 
 // ── MODULAR MANTRA ───────────────────────────────────────────────────────────
 // Change this single constant to update the mantra everywhere on the page.
@@ -535,6 +536,7 @@ export default function BrixPage() {
         <ul className="nav-links">
           <li><button onClick={() => scrollTo("top")}>HOME</button></li>
           <li><button onClick={() => scrollTo("sec-mission")}>MISSION</button></li>
+          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-burn")}>BURN $BRIX</button></li>
           <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li>
           <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li>
           <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
@@ -557,6 +559,7 @@ export default function BrixPage() {
             <div className="nav-dropdown">
               <button onClick={() => scrollTo("top")}>HOME</button>
               <button onClick={() => scrollTo("sec-mission")}>MISSION</button>
+              <button className="dd-burn-link" onClick={() => { scrollTo("sec-burn"); setMenuOpen(false); }}>BURN $BRIX</button>
               <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button>
               <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button>
               <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button>
@@ -671,9 +674,8 @@ export default function BrixPage() {
         </div>
       </div>
 
-      <div className="cta-row">
-        <a href={GET_BRIX_LINK} className="btn btn-danger" title="Token Not Live Yet">BURN $BRIX &nbsp;›</a>
-        <a href="/docs.html" target="_blank" rel="noopener noreferrer" className="btn btn-outline">READ THE DOCS &nbsp;›</a>
+      <div className="cta-row cta-row--centered">
+        <BurnButton tokenMint={TOKEN_MINT} />
       </div>
 
       {/* ══ BOTTOM GRID ════════════════════════════════════════════════════ */}
