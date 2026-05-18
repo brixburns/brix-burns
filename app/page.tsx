@@ -24,7 +24,7 @@ const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 // ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = "3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw"; // ← indirizzo reale $BRIX al lancio
+const TOKEN_MINT     = ""; // ← inserire indirizzo reale $BRIX al lancio
 const INITIAL_SUPPLY = 1_000_000_000;
 const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
@@ -78,10 +78,11 @@ const TRACKER_DEFAULT: TrackerData = {
 };
 
 function useLiveTracker(): TrackerData {
-  const [data, setData] = useState<TrackerData>(TRACKER_DEFAULT);
+  const [data, setData] = useState<TrackerData>({ ...TRACKER_DEFAULT, loading: false });
 
   // ── FAST: supply/burn ogni 30s ───────────────────────────────────────────
   const loadBurn = useCallback(async () => {
+    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch, mostra zeri
     try {
       const supplyRes  = await fetch(HELIUS_RPC, {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -106,6 +107,7 @@ function useLiveTracker(): TrackerData {
 
   // ── SLOW: prezzo / holders ogni 2 min ────────────────────────────────────
   const loadSlow = useCallback(async () => {
+    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch
     // Prezzo + market cap + 24h change
     let priceNum = 0, mcapNum = 0, change24h = 0;
     try {
