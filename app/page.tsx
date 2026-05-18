@@ -15,7 +15,7 @@
 import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
 
-import MintButton from "./MintButton";
+import MintButton from "./MintButtons/MintButtonF1b-devnet";
 
 // ── MODULAR MANTRA ───────────────────────────────────────────────────────────
 // Change this single constant to update the mantra everywhere on the page.
@@ -24,7 +24,7 @@ const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 // ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = "FsCTZgJfZpaLKSRkEVreVLVodtU2m1Mqte3A7LiN7gPD";
+const TOKEN_MINT     = "3BgwJ8b7b9hHX4sgfZ2KJhv9496CoVfsMK2YePevsBRw"; // ← indirizzo reale $BRIX al lancio
 const INITIAL_SUPPLY = 1_000_000_000;
 const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
@@ -215,6 +215,10 @@ const FAQS = [
   {
     q: "What are Top Burners?",
     a: "A permanent leaderboard of wallets that voluntarily burn the most $BRIX. Top 20 get airdropped NFTs. Top 5 get extra. The leaderboard tracks burns across the entire lifetime of the project, not just during mint phases. Top Burners are the project's frontline.",
+  },
+  {
+    q: "What is the F1 Early Stage?",
+    a: "A pre-launch access tier reserved for the project's earliest supporters. 40 spots are allocated to Top Burners — the wallets that burn the most $BRIX before mint opens. Additional spots are distributed through social and project engagement milestones. F1 Early Stage is capped at 100 NFTs total, with a maximum of 2 mints per wallet. Note: the allocation may be slightly over-subscribed — not all eligible wallets are guaranteed a spot. Mint price is 0 SOL (burn requirement still applies).",
   },
   {
     q: "Will the burn continue after mint?",
