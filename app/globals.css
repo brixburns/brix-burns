@@ -255,23 +255,13 @@ nav {
 .cta-row--centered { flex-direction: column; align-items: center; }
 
 /* ══ BURN BUTTON — FLAME ══════════════════════════════════════════════════ */
-@keyframes flame-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 16px rgba(220, 38, 38, 0.7),
-      0 0 32px rgba(234, 88, 12, 0.5),
-      0 0 56px rgba(251, 146, 60, 0.2);
-  }
-  50% {
-    box-shadow:
-      0 0 28px rgba(220, 38, 38, 0.95),
-      0 0 56px rgba(234, 88, 12, 0.7),
-      0 0 90px rgba(251, 191, 36, 0.35);
-  }
+@keyframes burn-glow {
+  0%,100% { box-shadow: 0 0 0 1px var(--orange), 0 0 10px rgba(255,75,31,.5); }
+  50%      { box-shadow: 0 0 0 1px var(--orange), 0 0 26px rgba(255,75,31,.9), 0 0 52px rgba(255,75,31,.25); }
 }
 @keyframes nav-burn-pulse {
-  0%, 100% { text-shadow: 0 0 6px rgba(234,88,12,.5); opacity: 1; }
-  50%       { text-shadow: 0 0 14px rgba(234,88,12,.9), 0 0 28px rgba(220,38,38,.4); opacity: .85; }
+  0%, 100% { text-shadow: 0 0 6px rgba(255,75,31,.5); opacity: 1; }
+  50%       { text-shadow: 0 0 14px rgba(255,75,31,.9), 0 0 28px rgba(255,75,31,.4); opacity: .85; }
 }
 
 .burn-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; }
@@ -279,15 +269,15 @@ nav {
 .btn-burn-flame {
   position: relative;
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 15px 44px;
-  font-family: var(--font-cond); font-size: 1.15rem; font-weight: 900;
+  padding: 15px 38px;
+  font-family: var(--font-cond); font-size: 1.22rem; font-weight: 550;
   letter-spacing: .2em; text-transform: uppercase;
-  color: #fff;
+  color: #ffee00;
   background: linear-gradient(135deg,
     #7f1d1d 0%, #b91c1c 18%, #dc2626 35%,
     #ea580c 55%, #f97316 72%, #fbbf24 100%);
   border: none; border-radius: 3px; cursor: pointer;
-  animation: flame-pulse 2.4s ease-in-out infinite;
+  animation: burn-glow 2.4s ease-in-out infinite;
   transition: transform .15s, filter .15s;
   min-width: 280px;
 }
@@ -298,29 +288,52 @@ nav {
 .btn-burn-flame.open { filter: brightness(1.15); }
 .btn-burn-flame.pre-launch {
   background: linear-gradient(135deg, #3b1010 0%, #581c1c 40%, #431407 70%, #3d2000 100%);
-  animation: flame-pulse 3.5s ease-in-out infinite;
+  animation: burn-glow 3.5s ease-in-out infinite;
   cursor: default; opacity: .75;
 }
 .btn-burn-flame:disabled { cursor: default; }
 
-.burn-flame-icon { font-size: 1.2rem; line-height: 1; }
-.burn-btn-label  { line-height: 1; }
+.burn-btn-label { line-height: 1; }
+
+/* Wallet status row under button */
+.burn-wallet-status {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: .58rem;
+  letter-spacing: .1em; margin-top: 6px;
+}
+.burn-wallet-name  { color: var(--dim); }
+.burn-connect-hint { color: var(--dim); letter-spacing: .12em; }
+.burn-disconnect-btn {
+  background: none; border: none;
+  color: var(--orange); font-family: var(--font-mono);
+  font-size: .55rem; letter-spacing: .12em;
+  cursor: pointer; padding: 0; transition: color .15s;
+}
+.burn-disconnect-btn:hover { color: var(--white); }
 
 .burn-soon-badge {
   position: absolute; top: -10px; right: -4px;
   background: var(--gold); color: #000;
-  font-size: .45rem; font-weight: 900; letter-spacing: .18em;
+  font-family: var(--font-mono);
+  font-size: .45rem; font-weight: 700; letter-spacing: .18em;
   padding: 3px 8px; border-radius: 2px;
 }
 
 /* ── Panel ── */
 .burn-panel {
   width: 100%; max-width: 380px;
-  background: #111100; border: 1px solid rgba(234,88,12,.35);
-  border-top: none; border-radius: 0 0 3px 3px;
-  padding: 18px 20px; display: flex; flex-direction: column; gap: 12px;
-  box-shadow: 0 8px 32px rgba(220,38,38,.15);
+  background: var(--surface); border: 1px solid var(--gold);
+  padding: 20px 20px; display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 6px 28px rgba(245,196,0,.08);
+  position: relative;
 }
+.burn-panel::before, .burn-panel::after {
+  content: ''; position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--gold); border-style: solid;
+}
+.burn-panel::before { top: 6px;    left: 6px;  border-width: 1px 0 0 1px; }
+.burn-panel::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
 .burn-balance {
   font-family: var(--font-mono); font-size: .62rem;
   color: var(--dim); letter-spacing: .12em;
@@ -350,8 +363,8 @@ nav {
 .burn-confirm-btn {
   width: 100%; padding: 12px;
   background: linear-gradient(135deg, #b91c1c, #ea580c, #f97316);
-  border: none; border-radius: 2px; color: #fff;
-  font-family: var(--font-cond); font-size: .95rem; font-weight: 900;
+  border: none; border-radius: 2px; color: #000000;
+  font-family: var(--font-cond); font-size: .95rem; font-weight: 600;
   letter-spacing: .15em; cursor: pointer;
   transition: filter .15s, transform .15s;
 }
