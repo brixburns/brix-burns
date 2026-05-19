@@ -11,7 +11,8 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 // Cambia in WalletAdapterNetwork.Mainnet per la produzione
-const NETWORK = WalletAdapterNetwork.Devnet;
+const NETWORK   = WalletAdapterNetwork.Mainnet;
+const ENDPOINT  = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function WalletContextProvider({
@@ -19,7 +20,7 @@ export default function WalletContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const endpoint = useMemo(() => clusterApiUrl(NETWORK), []);
+  const endpoint = useMemo(() => ENDPOINT, []);
   // Phantom (and other Solana wallets) auto-register via the Wallet Standard.
   // No need to instantiate adapter classes manually — they're auto-detected.
   const wallets  = useMemo(() => [], []);

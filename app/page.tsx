@@ -14,9 +14,11 @@
 
 import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
 
-import MintButton from "./MintButtons/MintButtonF1b-devnet";
-import BurnButton from "./BurnButton";
+// import MintButton from "./MintButtons/MintButtonF1a-devnet";
+import dynamic from "next/dynamic";
+const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 
 // ── MODULAR MANTRA ───────────────────────────────────────────────────────────
 // Change this single constant to update the mantra everywhere on the page.
@@ -193,7 +195,7 @@ const FAQS = [
   },
   {
     q: "How does minting work?",
-    a: "Four phases (F1–F4). Each phase requires burning a set amount of $BRIX to access the mint, then paying 0.05–0.18 SOL per NFT (price increases per phase). A SOL-only alternative path exists for users without $BRIX — it triggers buyback-and-burn automatically.",
+    a: "Four phases (F1–F4). Each phase requires burning a set amount of $BRIX to access the mint, then paying 0.05–0.18 SOL per NFT (price increases per phase). A SOL-only alternative path exists for users without $BRIX — it triggers buyback-and-burn automatically. Each phase has its own mint limit per wallet. Check the official docs or announcements for the exact cap per phase. N.B. The interface allows minting up to 5 NFTs per transaction for reliability reasons",
   },
   {
     q: "Why should I burn my $BRIX?",
@@ -462,6 +464,8 @@ function SafetyModal({ onAccept, onClose }: { onAccept: () => void; onClose: () 
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════
 export default function BrixPage() {
+  const wallet = useWallet();
+
   const [copied,    setCopied]    = useState(false);
   const [menuOpen,  setMenuOpen]  = useState(false);
   const [counter,   setCounter]   = useState<"brix"|"percent"|"usd">("brix"); // DEFAULT: $BRIX BURNED
@@ -485,6 +489,10 @@ export default function BrixPage() {
       if (localStorage.getItem("brix_safety_acked") === "1") setSafetyAcked(true);
     } catch {}
   }, []);
+
+  useEffect(() => {
+    if (wallet.connected && !safetyAcked) setSafetyOpen(true);
+  }, [wallet.connected, safetyAcked]);
 
   const acceptSafety = useCallback(() => {
     try { localStorage.setItem("brix_safety_acked", "1"); } catch {}
@@ -783,7 +791,7 @@ export default function BrixPage() {
           </div>
 
             <div className="mint-button-slot">
-              <MintButton/>
+              <div className="coming-soon" style={{ fontSize: "1.4rem", padding: "1px 0", opacity: 0.5 }}>MINT NOT ACTIVE.</div>
             </div>
         </div>
 
