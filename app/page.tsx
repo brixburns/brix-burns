@@ -2,14 +2,12 @@
 // Mission-driven layout: burn is the protagonist, NFTs are the mechanism.
 //
 // ═══════════════════════════════════════════════════════════════════════════
-// PRE-LAUNCH MODE — replace these constants when token goes live:
-//   1. BRIX_BURNED / BURN_PERCENT / BURN_USD → wire to live RPC tracker
-//   2. STATS array → replace live=true / soon dot, real numbers
-//   3. CA "BRiXc0ntr4ct" → real contract address
-//   4. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
-//   5. MANTRA_TAIL → flip from "EVERY MINT GETS US CLOSER." to mint-phase tail,
-//      then to "" after mint ends (only "THE GOAL IS ZERO." remains)
-//   6. TOP_BURNERS_DATA → wire to live leaderboard backend
+// PRE-LAUNCH MODE — at launch, change only these things:
+//   1. TOKEN_MINT → real $BRIX address (live tracker auto-wires everything)
+//   2. CA "BRiXc0ntr4ct" → real contract address
+//   3. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
+//   4. MANTRA_TAIL → "EVERY MINT GETS US CLOSER." then "" post-mint
+//   5. TOP_BURNERS_DATA → wire to live leaderboard backend
 // ═══════════════════════════════════════════════════════════════════════════
 
 "use client";
@@ -17,34 +15,171 @@
 import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
 
-import MintButton from "./MintButton";
+import MintButton from "./MintButtons/MintButtonF1b-devnet";
+import BurnButton from "./BurnButton";
 
 // ── MODULAR MANTRA ───────────────────────────────────────────────────────────
 // Change this single constant to update the mantra everywhere on the page.
 // Post-mint: set to "" to display only "THE GOAL IS ZERO." (no tail).
 const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
-// ── BURN COUNTER (placeholder, wire to live tracker post-launch) ─────────────
-const BRIX_BURNED   = "00,000,000";       // tokens
-const BURN_PERCENT  = "00.00%";           // of supply
-const BURN_USD      = "$00,000.00";       // USD value
-const TARGET_PERCENT = 90;
+// ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
+// ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
+const TOKEN_MINT     = ""; // ← inserire indirizzo reale $BRIX al lancio
+const INITIAL_SUPPLY = 1_000_000_000;
+const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
+const TARGET_PERCENT  = 90;
+const REFRESH_BURN_MS = 30_000;  // burn counter: ogni 30s
+const REFRESH_SLOW_MS = 120_000; // prezzo/holders: ogni 2 min
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ── EXTERNAL LINKS ───────────────────────────────────────────────────────────
 const GET_BRIX_LINK = "#";  // → "https://pump.fun/coin/<MINT_ADDRESS>" at launch
 const X_LINK        = "https://x.com/BRIX_burns";
 
-// ── STATS BAR ────────────────────────────────────────────────────────────────
+// ── TOP BURNERS WORKER URL ────────────────────────────────────────────────────
+const TOP_BURNERS_URL = "https://brix-top-burners.420losrs.workers.dev/top-burners";
+
+// ── STATS BAR TYPE ────────────────────────────────────────────────────────────
 type StatItem = { label: string; value: string; live?: boolean };
-const stats: StatItem[] = [
-  { label: "PRICE",        value: "$0.000000"     },
-  { label: "MARKET CAP",   value: "$000,000"      },
-  { label: "SUPPLY",       value: "1,000,000,000" },
-  { label: "BURNED",       value: "00.00%"        },
-  { label: "TARGET BURN",  value: "90%"           },
-  { label: "HOLDERS",      value: "000"           },
-  { label: "STATUS",       value: "",  live: true },
-];
+
+// ── NUMBER FORMATTERS ─────────────────────────────────────────────────────────
+function fmtTokens(n: number): string {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+function fmtPrice(n: number): string {
+  if (n === 0)      return "$0.000000";
+  if (n < 0.000001) return `$${n.toExponential(2)}`;
+  if (n < 0.001)    return `$${n.toFixed(6)}`;
+  if (n < 1)        return `$${n.toFixed(4)}`;
+  return `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+}
+function fmtUsd(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(2)}B`;
+  if (n >= 1_000_000)     return `$${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000)         return `$${(n / 1_000).toFixed(1)}K`;
+  return `$${n.toFixed(2)}`;
+}
+function fmtPct(n: number): string { return `${n.toFixed(2)}%`; }
+
+// ── LIVE TRACKER HOOK ─────────────────────────────────────────────────────────
+type TrackerData = {
+  burned: string; burnPct: number; burnPctStr: string;
+  burnUsd: string; price: string; mcap: string;
+  supply: string; holders: string;
+  priceChange24h: string; priceChangePositive: boolean;
+  loading: boolean;
+};
+const TRACKER_DEFAULT: TrackerData = {
+  burned: "00,000,000", burnPct: 0, burnPctStr: "00.00%",
+  burnUsd: "$00,000.00", price: "$0.000000", mcap: "$000,000",
+  supply: "1,000,000,000", holders: "—",
+  priceChange24h: "+0.00%", priceChangePositive: true,
+  loading: true,
+};
+
+function useLiveTracker(): TrackerData {
+  const [data, setData] = useState<TrackerData>({ ...TRACKER_DEFAULT, loading: false });
+
+  // ── FAST: supply/burn ogni 30s ───────────────────────────────────────────
+  const loadBurn = useCallback(async () => {
+    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch, mostra zeri
+    try {
+      const supplyRes  = await fetch(HELIUS_RPC, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: "supply",
+          method: "getTokenSupply", params: [TOKEN_MINT] }),
+      });
+      const supplyJson = await supplyRes.json();
+      const currentSupply = Number(supplyJson?.result?.value?.uiAmount ?? INITIAL_SUPPLY);
+      const burned  = Math.max(0, INITIAL_SUPPLY - currentSupply);
+      const burnPct = (burned / INITIAL_SUPPLY) * 100;
+      setData(prev => ({
+        ...prev,
+        burned:    fmtTokens(burned),
+        burnPct,
+        burnPctStr: fmtPct(burnPct),
+        burnUsd:   fmtUsd((prev.price ? Number(prev.price.replace(/[$,]/g, "")) : 0) * burned),
+        supply:    fmtTokens(currentSupply),
+        loading:   false,
+      }));
+    } catch { setData(prev => ({ ...prev, loading: false })); }
+  }, []);
+
+  // ── SLOW: prezzo / holders ogni 2 min ────────────────────────────────────
+  const loadSlow = useCallback(async () => {
+    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch
+    // Prezzo + market cap + 24h change
+    let priceNum = 0, mcapNum = 0, change24h = 0;
+    try {
+      const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+      const dexJson = await dexRes.json();
+      type DexPair = {
+        priceUsd?: string; marketCap?: number; fdv?: number;
+        liquidity?: { usd?: number };
+        priceChange?: { h24?: number };
+      };
+      const pairs: DexPair[] = dexJson?.pairs ?? [];
+      const pair = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+      priceNum  = pair?.priceUsd ? Number(pair.priceUsd) : 0;
+      mcapNum   = pair?.marketCap ?? pair?.fdv ?? 0;
+      change24h = pair?.priceChange?.h24 ?? 0;
+    } catch { /* price non disponibile */ }
+
+    // Holders: Solscan primary, Helius fallback
+    let holdersStr = "—";
+    try {
+      const solRes  = await fetch(
+        `https://public-api.solscan.io/token/holders?tokenAddress=${TOKEN_MINT}&limit=1&offset=0`
+      );
+      const solJson: { total?: number } = await solRes.json();
+      if (typeof solJson?.total === "number" && solJson.total > 0) {
+        holdersStr = fmtTokens(solJson.total);
+      } else {
+        throw new Error("solscan no total");
+      }
+    } catch {
+      try {
+        let total = 0;
+        let cursor: string | null = null;
+        do {
+          const holdRes: Response = await fetch(HELIUS_RPC, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jsonrpc: "2.0", id: "holders",
+              method: "getTokenAccounts",
+              params: { mint: TOKEN_MINT, limit: 1000, cursor,
+                options: { showZeroBalance: false } } }),
+          });
+          const holdJson: { result?: { token_accounts?: unknown[]; cursor?: string } } = await holdRes.json();
+          const accounts: unknown[] = holdJson?.result?.token_accounts ?? [];
+          total  += accounts.length;
+          cursor  = holdJson?.result?.cursor ?? null;
+        } while (cursor);
+        if (total > 0) holdersStr = fmtTokens(total);
+      } catch { /* holders non disponibili */ }
+    }
+
+    const changeSign = change24h >= 0 ? "+" : "";
+    setData(prev => ({
+      ...prev,
+      price:               fmtPrice(priceNum),
+      mcap:                fmtUsd(mcapNum),
+      holders:             holdersStr,
+      priceChange24h:      `${changeSign}${change24h.toFixed(2)}%`,
+      priceChangePositive: change24h >= 0,
+    }));
+  }, []);
+
+  useEffect(() => {
+    loadBurn();
+    loadSlow();
+    const fastId = setInterval(loadBurn, REFRESH_BURN_MS);
+    const slowId = setInterval(loadSlow, REFRESH_SLOW_MS);
+    return () => { clearInterval(fastId); clearInterval(slowId); };
+  }, [loadBurn, loadSlow]);
+
+  return data;
+}
 
 // ── FAQ DATA ─────────────────────────────────────────────────────────────────
 const FAQS = [
@@ -85,6 +220,10 @@ const FAQS = [
     a: "A permanent leaderboard of wallets that voluntarily burn the most $BRIX. Top 20 get airdropped NFTs. Top 5 get extra. The leaderboard tracks burns across the entire lifetime of the project, not just during mint phases. Top Burners are the project's frontline.",
   },
   {
+    q: "What is the F1 Early Stage?",
+    a: "A pre-launch access tier reserved for the project's earliest supporters. 40 spots are allocated to Top Burners — the wallets that burn the most $BRIX before mint opens. Additional spots are distributed through social and project engagement milestones. F1 Early Stage is capped at 100 NFTs total, with a maximum of 2 mints per wallet. Note: the allocation may be slightly over-subscribed — not all eligible wallets are guaranteed a spot. Mint price is 0 SOL (burn requirement still applies).",
+  },
+  {
     q: "Will the burn continue after mint?",
     a: "Yes. The mint event is the beginning, not the end. Secondary royalties (6.9%), Pump.fun trading fees, and a 15% buyback-and-burn slice of every phase pool keep the supply trending toward zero. The long-term target is 90% destroyed.",
   },
@@ -98,11 +237,40 @@ const FAQS = [
   },
 ];
 
-// ── TOP BURNERS — placeholder data, wire to live backend ─────────────────────
-type BurnerEntry = { rank: number; wallet: string; burned: string; reward: string };
-const TOP_BURNERS_DATA: BurnerEntry[] = [
-  // Empty pre-launch; populate from live leaderboard script after token launch
-];
+// ── TOP BURNERS — live leaderboard from Cloudflare Worker ────────────────────
+type BurnerEntry = { rank: number; wallet: string; burned: string };
+
+type WorkerBurner = { rank: number; wallet: string; burned: number };
+
+function useTopBurners() {
+  const [burners, setBurners] = useState<BurnerEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res  = await fetch(TOP_BURNERS_URL);
+        const data: WorkerBurner[] = await res.json();
+        if (!cancelled) {
+          setBurners(data.map(d => ({
+            rank:   d.rank,
+            wallet: d.wallet,
+            burned: fmtTokens(d.burned),
+          })));
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    const id = setInterval(load, 60_000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  return { burners, loading };
+}
 
 // ── ICONS ────────────────────────────────────────────────────────────────────
 function CopyIcon({ done }: { done: boolean }) {
@@ -120,7 +288,7 @@ function CopyIcon({ done }: { done: boolean }) {
 }
 
 // ── STATS BAR ────────────────────────────────────────────────────────────────
-function StatsBar() {
+function StatsBar({ stats }: { stats: StatItem[] }) {
   const [paused, setPaused] = useState(false);
   const items = [...stats, ...stats, ...stats, ...stats];
   return (
@@ -177,18 +345,20 @@ function FaqSection() {
 // ── TOP BURNERS SECTION ──────────────────────────────────────────────────────
 function TopBurnersSection() {
   const [expanded, setExpanded] = useState(false);
+  const { burners, loading } = useTopBurners();
 
-  // Placeholder rows — replace with live leaderboard data after token launch
-  const top5: BurnerEntry[] = TOP_BURNERS_DATA.length > 0
-    ? TOP_BURNERS_DATA.slice(0, 5)
+  const empty = !loading && burners.length === 0;
+
+  const top5: BurnerEntry[] = burners.length > 0
+    ? burners.slice(0, 5)
     : Array.from({ length: 5 }, (_, i) => ({
-        rank: i + 1, wallet: "—", burned: "—", reward: i < 5 ? "2 NFT" : "1 NFT",
+        rank: i + 1, wallet: "—", burned: "—",
       }));
 
-  const top6to20: BurnerEntry[] = TOP_BURNERS_DATA.length > 0
-    ? TOP_BURNERS_DATA.slice(5, 20)
+  const top6to20: BurnerEntry[] = burners.length > 0
+    ? burners.slice(5, 20)
     : Array.from({ length: 15 }, (_, i) => ({
-        rank: i + 6, wallet: "—", burned: "—", reward: "1 NFT",
+        rank: i + 6, wallet: "—", burned: "—",
       }));
 
   return (
@@ -257,8 +427,10 @@ function TopBurnersSection() {
       )}
 
       <div className="tb-footer">
-        <span className="tb-footer-status">⚡ LEADERBOARD ACTIVATES AT TOKEN LAUNCH</span>
-        <span className="tb-footer-update">UPDATED EVERY 30 MIN</span>
+        <span className="tb-footer-status">
+          {loading ? "⏳ LOADING LEADERBOARD…" : empty ? "⚡ LEADERBOARD ACTIVATES AT TOKEN LAUNCH" : "🔴 LIVE LEADERBOARD"}
+        </span>
+        <span className="tb-footer-update">UPDATED EVERY 60 SEC</span>
       </div>
     </section>
   );
@@ -296,6 +468,17 @@ export default function BrixPage() {
   const [flipping,  setFlipping]  = useState(false);
   const [safetyOpen,  setSafetyOpen]  = useState(false);
   const [safetyAcked, setSafetyAcked] = useState(false);
+
+  const tracker = useLiveTracker();
+  const liveStats: StatItem[] = [
+    { label: "PRICE",       value: tracker.price },
+    { label: "MARKET CAP",  value: tracker.mcap },
+    { label: "SUPPLY",      value: tracker.supply },
+    { label: "BURNED",      value: tracker.burnPctStr },
+    { label: "TARGET BURN", value: `${TARGET_PERCENT}%` },
+    { label: "HOLDERS",     value: tracker.holders },
+    { label: "STATUS",      value: "", live: true },
+  ];
 
   useEffect(() => {
     try {
@@ -353,6 +536,7 @@ export default function BrixPage() {
         <ul className="nav-links">
           <li><button onClick={() => scrollTo("top")}>HOME</button></li>
           <li><button onClick={() => scrollTo("sec-mission")}>MISSION</button></li>
+          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-burn")}>BURN $BRIX</button></li>
           <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li>
           <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li>
           <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
@@ -363,8 +547,10 @@ export default function BrixPage() {
 
         <div className="nav-right-group">
           <div className="price-inline">
-            <span className="pi-num">$0.000000</span>
-            <span className="pi-change">+0.00%</span>
+            <span className="pi-num">{tracker.price}</span>
+            <span className="pi-change" style={{ color: tracker.priceChangePositive ? "var(--green)" : "var(--orange)" }}>
+              {tracker.priceChange24h}
+            </span>
           </div>
           <button className="hamburger" onClick={() => setMenuOpen(o => !o)} aria-label={menuOpen ? "Close menu" : "Open menu"}>
             {menuOpen ? "✕" : "☰"}
@@ -373,6 +559,7 @@ export default function BrixPage() {
             <div className="nav-dropdown">
               <button onClick={() => scrollTo("top")}>HOME</button>
               <button onClick={() => scrollTo("sec-mission")}>MISSION</button>
+              <button className="dd-burn-link" onClick={() => { scrollTo("sec-burn"); setMenuOpen(false); }}>BURN $BRIX</button>
               <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button>
               <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button>
               <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button>
@@ -384,7 +571,7 @@ export default function BrixPage() {
         </div>
       </nav>
 
-      <StatsBar/>
+      <StatsBar stats={liveStats}/>
 
       <div className="launch-banner">[ LAUNCHING SOON ]</div>
 
@@ -420,15 +607,15 @@ export default function BrixPage() {
         </div>
         <div className={`burn-box ${counter}-mode`}>
           <div className={`burn-flip${flipping ? " flipping" : ""}`}>
-            {counter === "brix"    && <div className="burn-value brix">{BRIX_BURNED}</div>}
-            {counter === "percent" && <div className="burn-value percent">{BURN_PERCENT}</div>}
-            {counter === "usd"     && <div className="burn-value usd">{BURN_USD}</div>}
+            {counter === "brix"    && <div className="burn-value brix">{tracker.burned}</div>}
+            {counter === "percent" && <div className="burn-value percent">{tracker.burnPctStr}</div>}
+            {counter === "usd"     && <div className="burn-value usd">{tracker.burnUsd}</div>}
           </div>
         </div>
 
         <div className="burn-progress-wrap">
           <div className="burn-progress-track">
-            <div className="burn-progress-fill" style={{ width: `${0}%` }}/>
+            <div className="burn-progress-fill" style={{ width: `${Math.min(tracker.burnPct, 100)}%` }}/>
             <div className="burn-progress-target" title="Target: 90%"/>
           </div>
           <div className="burn-progress-labels">
@@ -487,9 +674,8 @@ export default function BrixPage() {
         </div>
       </div>
 
-      <div className="cta-row">
-        <a href={GET_BRIX_LINK} className="btn btn-danger" title="Token Not Live Yet">BURN $BRIX &nbsp;›</a>
-        <a href="/docs.html" target="_blank" rel="noopener noreferrer" className="btn btn-outline">READ THE DOCS &nbsp;›</a>
+      <div className="cta-row cta-row--centered">
+        <BurnButton tokenMint={TOKEN_MINT} />
       </div>
 
       {/* ══ BOTTOM GRID ════════════════════════════════════════════════════ */}
