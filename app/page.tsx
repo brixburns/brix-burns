@@ -544,7 +544,7 @@ export default function BrixPage() {
         <ul className="nav-links">
           <li><button onClick={() => scrollTo("top")}>HOME</button></li>
           <li><button onClick={() => scrollTo("sec-mission")}>MISSION</button></li>
-          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-burn")}>BURN $BRIX</button></li>
+          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-jackpot")}>BURN $BRIX</button></li>
           <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li>
           <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li>
           <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
@@ -567,7 +567,7 @@ export default function BrixPage() {
             <div className="nav-dropdown">
               <button onClick={() => scrollTo("top")}>HOME</button>
               <button onClick={() => scrollTo("sec-mission")}>MISSION</button>
-              <button className="dd-burn-link" onClick={() => { scrollTo("sec-burn"); setMenuOpen(false); }}>BURN $BRIX</button>
+              <button className="dd-burn-link" onClick={() => { scrollTo("sec-jackpot"); setMenuOpen(false); }}>BURN $BRIX</button>
               <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button>
               <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button>
               <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button>
@@ -676,7 +676,7 @@ export default function BrixPage() {
           <div className="big-num n-white">3,333</div>
           <div className="num-label">NFTS</div>
         </div>
-        <div className="number-cell">
+        <div className="number-cell" id="sec-jackpot" style={{ scrollMarginTop: "200px" }}>
           <div className="big-num n-gold">30</div>
           <div className="num-label">JACKPOTS</div>
         </div>
