@@ -218,6 +218,10 @@ const FAQS = [
     a: "20% of each phase's pool is reserved for jackpot draws. Winners are selected by weighted probability — higher rarity raises your odds, but anyone can win. 30 jackpot winners across all four phases.",
   },
   {
+    q: "How does Burn work?",
+    a: "Burning $BRIX permanently removes tokens from the circulating supply. Once confirmed on-chain, the operation is irreversible — tokens are gone forever. To burn: connect your wallet, open the Burn panel, enter an amount, and confirm the transaction in your wallet. The balance shown is pulled live from the blockchain.",
+  },
+  {
     q: "What are Top Burners?",
     a: "A permanent leaderboard of wallets that voluntarily burn the most $BRIX. Top 20 get airdropped NFTs. Top 5 get extra. The leaderboard tracks burns across the entire lifetime of the project, not just during mint phases. Top Burners are the project's frontline.",
   },
