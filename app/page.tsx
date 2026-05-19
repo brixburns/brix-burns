@@ -198,6 +198,10 @@ const FAQS = [
     a: "Four phases (F1–F4). Each phase requires burning a set amount of $BRIX to access the mint, then paying 0.05–0.18 SOL per NFT (price increases per phase). A SOL-only alternative path exists for users without $BRIX — it triggers buyback-and-burn automatically. Each phase has its own mint limit per wallet. Check the official docs or announcements for the exact cap per phase. N.B. The interface allows minting up to 5 NFTs per transaction for reliability reasons",
   },
   {
+    q: "How does Burn work?",
+    a: "Burning $BRIX permanently removes tokens from the circulating supply. Once confirmed on-chain, the operation is irreversible — tokens are gone forever. To burn: connect your wallet, open the Burn panel, enter an amount, and confirm the transaction in your wallet. The balance shown is pulled live from the blockchain.",
+  },
+  {
     q: "Why should I burn my $BRIX?",
     a: "Because the supply going down is the entire point. Burning gates the mint, but it's also a public commitment to the mission. Top burners are tracked on the leaderboard and get airdrops. The fewer tokens in circulation, the closer we are to zero.",
   },
@@ -216,10 +220,6 @@ const FAQS = [
   {
     q: "What is the Jackpot?",
     a: "20% of each phase's pool is reserved for jackpot draws. Winners are selected by weighted probability — higher rarity raises your odds, but anyone can win. 30 jackpot winners across all four phases.",
-  },
-  {
-    q: "How does Burn work?",
-    a: "Burning $BRIX permanently removes tokens from the circulating supply. Once confirmed on-chain, the operation is irreversible — tokens are gone forever. To burn: connect your wallet, open the Burn panel, enter an amount, and confirm the transaction in your wallet. The balance shown is pulled live from the blockchain.",
   },
   {
     q: "What are Top Burners?",
