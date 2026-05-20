@@ -198,6 +198,10 @@ const FAQS = [
     a: "Four phases (F1–F4). Each phase requires burning a set amount of $BRIX to access the mint, then paying 0.05–0.18 SOL per NFT (price increases per phase). A SOL-only alternative path exists for users without $BRIX — it triggers buyback-and-burn automatically. Each phase has its own mint limit per wallet. Check the official docs or announcements for the exact cap per phase. N.B. The interface allows minting up to 5 NFTs per transaction for reliability reasons",
   },
   {
+    q: "How does Burn work?",
+    a: "Burning $BRIX permanently removes tokens from the circulating supply. Once confirmed on-chain, the operation is irreversible — tokens are gone forever. To burn: connect your wallet, open the Burn panel, enter an amount, and confirm the transaction in your wallet. The balance shown is pulled live from the blockchain.",
+  },
+  {
     q: "Why should I burn my $BRIX?",
     a: "Because the supply going down is the entire point. Burning gates the mint, but it's also a public commitment to the mission. Top burners are tracked on the leaderboard and get airdrops. The fewer tokens in circulation, the closer we are to zero.",
   },
@@ -544,7 +548,7 @@ export default function BrixPage() {
         <ul className="nav-links">
           <li><button onClick={() => scrollTo("top")}>HOME</button></li>
           <li><button onClick={() => scrollTo("sec-mission")}>MISSION</button></li>
-          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-burn")}>BURN $BRIX</button></li>
+          <li><button className="nav-burn-link" onClick={() => scrollTo("sec-jackpot")}>BURN $BRIX</button></li>
           <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li>
           <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li>
           <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
@@ -567,7 +571,7 @@ export default function BrixPage() {
             <div className="nav-dropdown">
               <button onClick={() => scrollTo("top")}>HOME</button>
               <button onClick={() => scrollTo("sec-mission")}>MISSION</button>
-              <button className="dd-burn-link" onClick={() => { scrollTo("sec-burn"); setMenuOpen(false); }}>BURN $BRIX</button>
+              <button className="dd-burn-link" onClick={() => { scrollTo("sec-jackpot"); setMenuOpen(false); }}>BURN $BRIX</button>
               <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button>
               <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button>
               <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button>
@@ -636,14 +640,8 @@ export default function BrixPage() {
         </div>
       </div>
 
-      <div className="tagline">
-        <div className="tl-cta">
-          <a href={GET_BRIX_LINK} className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
-          <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-            FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
-          </a>
-        </div>
-        <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
+      <div className="cta-row cta-row--centered">
+        <BurnButton tokenMint={TOKEN_MINT} />
       </div>
 
       {/* ══ PILLARS ════════════════════════════════════════════════════════ */}
@@ -676,14 +674,20 @@ export default function BrixPage() {
           <div className="big-num n-white">3,333</div>
           <div className="num-label">NFTS</div>
         </div>
-        <div className="number-cell">
+        <div className="number-cell" id="sec-jackpot" style={{ scrollMarginTop: "200px" }}>
           <div className="big-num n-gold">30</div>
           <div className="num-label">JACKPOTS</div>
         </div>
       </div>
 
-      <div className="cta-row cta-row--centered">
-        <BurnButton tokenMint={TOKEN_MINT} />
+      <div className="tagline">
+        <div className="tl-cta">
+          <a href={GET_BRIX_LINK} className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
+          <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+            FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
+          </a>
+        </div>
+        <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
       </div>
 
       {/* ══ BOTTOM GRID ════════════════════════════════════════════════════ */}

@@ -243,13 +243,12 @@ nav {
 
 /* ══ NUMBERS ══ */
 .numbers-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); margin: 24px 24px 0; }
-@media (max-width: 640px) { .numbers-row { grid-template-columns: 1fr; } }
-.number-cell { background: var(--surface); padding: 28px 20px; text-align: center; }
-.big-num { font-family: var(--font-orb); font-size: clamp(2.4rem,6vw,3.5rem); font-weight: 900; letter-spacing: .04em; }
+.number-cell { background: var(--surface); padding: clamp(8px,2vw,28px) clamp(4px,1.5vw,20px); text-align: center; }
+.big-num { font-family: var(--font-orb); font-size: clamp(.7rem,5.5vw,3.5rem); font-weight: 900; letter-spacing: .04em; }
 .n-orange { color: var(--orange); }
 .n-white  { color: var(--white); }
 .n-gold   { color: var(--gold); }
-.num-label { font-size: .65rem; color: var(--dim); letter-spacing: .2em; margin-top: 6px; }
+.num-label { font-size: clamp(.32rem,1.4vw,.65rem); color: var(--dim); letter-spacing: clamp(0em,.2vw,.15em); margin-top: 4px; }
 
 .cta-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 36px 24px; }
 .cta-row--centered { flex-direction: column; align-items: center; }
