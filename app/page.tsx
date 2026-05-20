@@ -640,14 +640,8 @@ export default function BrixPage() {
         </div>
       </div>
 
-      <div className="tagline">
-        <div className="tl-cta">
-          <a href={GET_BRIX_LINK} className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
-          <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-            FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
-          </a>
-        </div>
-        <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
+      <div className="cta-row cta-row--centered">
+        <BurnButton tokenMint={TOKEN_MINT} />
       </div>
 
       {/* ══ PILLARS ════════════════════════════════════════════════════════ */}
@@ -686,8 +680,14 @@ export default function BrixPage() {
         </div>
       </div>
 
-      <div className="cta-row cta-row--centered">
-        <BurnButton tokenMint={TOKEN_MINT} />
+      <div className="tagline">
+        <div className="tl-cta">
+          <a href={GET_BRIX_LINK} className="btn btn-primary" title="Token Not Live Yet">GET $BRIX &nbsp;›</a>
+          <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+            FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
+          </a>
+        </div>
+        <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
       </div>
 
       {/* ══ BOTTOM GRID ════════════════════════════════════════════════════ */}
