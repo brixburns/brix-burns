@@ -1,14 +1,14 @@
 // Minimal Next.js page (App Router style)
 // Mission-driven layout: burn is the protagonist, NFTs are the mechanism.
 //
-// ═══════════════════════════════════════════════════════════════════════════
+// ===========================================================================
 // PRE-LAUNCH MODE — at launch, change only these things:
 //   1. TOKEN_MINT → real $BRIX address (live tracker auto-wires everything)
 //   2. CA "BRiXc0ntr4ct" → real contract address
 //   3. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
 //   4. MANTRA_TAIL → "EVERY MINT GETS US CLOSER." then "" post-mint
 //   5. TOP_BURNERS_DATA → wire to live leaderboard backend
-// ═══════════════════════════════════════════════════════════════════════════
+// ===========================================================================
 
 "use client";
 
@@ -27,9 +27,9 @@ const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 // ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = ""; // ← inserire indirizzo reale $BRIX al lancio
+const TOKEN_MINT     = "4UqR5AxVrRRbE7USMacaJhiKURZFtNfp1VEPApUCtN87"; // ← inserire indirizzo reale $BRIX al lancio
 const INITIAL_SUPPLY = 1_000_000_000;
-const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
+const HELIUS_RPC     = "https://devnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
 const REFRESH_BURN_MS = 30_000;  // burn counter: ogni 30s
 const REFRESH_SLOW_MS = 120_000; // prezzo/holders: ogni 2 min
@@ -464,9 +464,9 @@ function SafetyModal({ onAccept, onClose }: { onAccept: () => void; onClose: () 
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
+// ===========================================================================
 // MAIN PAGE
-// ═══════════════════════════════════════════════════════════════════════════
+// ===========================================================================
 export default function BrixPage() {
   const wallet = useWallet();
 
@@ -531,7 +531,7 @@ export default function BrixPage() {
 
   return (
     <>
-      {/* ══ NAV ════════════════════════════════════════════════════════════ */}
+      {/* == NAV ============================================================ */}
       <nav id="top">
         <button className="nav-logo" onClick={() => scrollTo("top")}>
           <Image src="/favicon.svg" alt="$BRIX" width={26} height={26} priority/>
@@ -587,7 +587,7 @@ export default function BrixPage() {
 
       <div className="launch-banner">[ LAUNCHING SOON ]</div>
 
-      {/* ══ HERO ═══════════════════════════════════════════════════════════ */}
+      {/* == HERO =========================================================== */}
       <section className="hero" id="sec-mission">
         <div className="corner tl"/><div className="corner tr"/>
         <div className="corner bl"/><div className="corner br"/>
@@ -604,7 +604,7 @@ export default function BrixPage() {
         </div>
       </section>
 
-      {/* ══ BURN COUNTER (tri-state) ═══════════════════════════════════════ */}
+      {/* == BURN COUNTER (tri-state) ======================================= */}
       <div className="burn-section">
         <div className="burn-tabs">
           <button className={`burn-tab${counter === "percent" ? " active-percent" : ""}`} onClick={() => flip("percent")}>
@@ -650,7 +650,7 @@ export default function BrixPage() {
         <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
       </div>
 
-      {/* ══ PILLARS ════════════════════════════════════════════════════════ */}
+      {/* == PILLARS ======================================================== */}
       <div className="pillars">
         <div className="pillar align-left">
           <div className="pc tl"/>
@@ -690,7 +690,7 @@ export default function BrixPage() {
         <BurnButton tokenMint={TOKEN_MINT} />
       </div>
 
-      {/* ══ BOTTOM GRID ════════════════════════════════════════════════════ */}
+      {/* == BOTTOM GRID ==================================================== */}
       <div className="bottom-grid">
 
         <div className="bottom-card" id="sec-how">
@@ -801,10 +801,10 @@ export default function BrixPage() {
 
       </div>
 
-      {/* ══ TOP BURNERS ═══════════════════════════════════════════════════ */}
+      {/* == TOP BURNERS =================================================== */}
       <TopBurnersSection/>
 
-      {/* ══ FAQ ════════════════════════════════════════════════════════════ */}
+      {/* == FAQ ============================================================ */}
       <FaqSection/>
 
       <footer>
