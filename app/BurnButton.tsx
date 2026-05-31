@@ -9,10 +9,11 @@ import {
   Transaction,
   TransactionInstruction,
 } from "@solana/web3.js";
+import ShareBurnCard from "./ShareBurnCard";
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const HELIUS_RPC =
-  "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
+  "https://devnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const BRIX_DECIMALS    = 6;
 const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 // ─────────────────────────────────────────────────────────────────────────────
@@ -52,6 +53,8 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
 
   const [showPanel,       setShowPanel]       = useState(false);
   const [amount,          setAmount]          = useState("");
+  const [burnedAmount,    setBurnedAmount]    = useState<number>(0);
+  const [newSupply,       setNewSupply]       = useState<number | null>(null);
   const [balance,         setBalance]         = useState<number | null>(null);
   const [tokenAccount,    setTokenAccount]    = useState<PublicKey | null>(null);
   const [burning,         setBurning]         = useState(false);
@@ -77,10 +80,7 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
     return () => { alive = false; };
   }, [publicKey, showPanel, tokenMint]);
 
-  // Open burn safety modal on first-ever wallet connection
-  useEffect(() => {
-    if (connected && !localStorage.getItem("brix_burn_safety_acked")) setBurnSafetyOpen(true);
-  }, [connected]);
+  // Safety modal is now triggered by the burn confirm button, not wallet connection
 
   // Close panel on disconnect
   useEffect(() => {
@@ -112,14 +112,29 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
     try {
       const conn  = new Connection(HELIUS_RPC);
       const mint  = new PublicKey(tokenMint);
+
+      // Fetch supply BEFORE burn so we can calculate exact post-burn value
+      let beforeSupply = 0;
+      try {
+        const preRes  = await fetch(HELIUS_RPC, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: "pre", method: "getTokenSupply", params: [tokenMint] }),
+        });
+        const preJson = await preRes.json();
+        beforeSupply  = Number(preJson?.result?.value?.uiAmount ?? 0);
+      } catch { /* non bloccante */ }
+
       const lamts = BigInt(Math.floor(rawAmount * 10 ** BRIX_DECIMALS));
       const ix    = burnCheckedIx(tokenAccount, mint, publicKey, lamts, BRIX_DECIMALS);
       const tx    = new Transaction().add(ix);
       const sig   = await sendTransaction(tx, conn);
       await conn.confirmTransaction(sig, "confirmed");
       setTxSig(sig);
+      setBurnedAmount(rawAmount);
       setAmount("");
       setBalance(prev => prev !== null ? Math.max(0, prev - rawAmount) : null);
+      // Calculate exact post-burn supply from pre-burn value
+      if (beforeSupply > 0) setNewSupply(Math.max(0, beforeSupply - rawAmount));
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Transaction failed";
       const m = msg.toLowerCase();
@@ -137,13 +152,12 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
   const isPreLaunch = !tokenMint;
 
   const handleBurnSafetyAck = () => {
-    localStorage.setItem("brix_burn_safety_acked", "1");
     setBurnSafetyOpen(false);
+    handleBurn();
   };
 
   const handleBurnSafetyDecline = () => {
     setBurnSafetyOpen(false);
-    disconnect();
   };
 
   return (
@@ -166,7 +180,7 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
             </button>
             <button onClick={handleBurnSafetyDecline}
               style={{ padding: "12px 16px", background: "transparent", border: "1px solid #555", color: "#888", fontFamily: "var(--font-mono)", fontSize: ".7rem", letterSpacing: ".1em", cursor: "pointer" }}>
-              DISCONNECT
+              CANCEL
             </button>
           </div>
         </div>
@@ -212,7 +226,16 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
               <a href={`https://solscan.io/tx/${txSig}`} target="_blank" rel="noopener noreferrer" className="burn-tx-link">
                 View on Solscan ›
               </a>
-              <button className="burn-again-btn" onClick={() => setTxSig(null)}>BURN MORE</button>
+              {publicKey && (
+                <ShareBurnCard
+                  amount={burnedAmount}
+                  wallet={publicKey.toString()}
+                  txSig={txSig}
+                  ca={tokenMint}
+                  supply={newSupply ?? undefined}
+                />
+              )}
+              <button className="burn-again-btn" onClick={() => { setTxSig(null); setNewSupply(null); }}>BURN MORE</button>
             </div>
           ) : (
             <>
@@ -240,7 +263,7 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
               {error && <div className="burn-error">{error}</div>}
               <button
                 className="burn-confirm-btn"
-                onClick={handleBurn}
+                onClick={() => setBurnSafetyOpen(true)}
                 disabled={burning || !amount || parseFloat(amount) <= 0}
               >
                 {burning
