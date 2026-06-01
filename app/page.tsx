@@ -16,7 +16,6 @@ import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 
-// import MintButton from "./MintButtons/MintButtonF1a-devnet";
 import dynamic from "next/dynamic";
 const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 
