@@ -1,11 +1,10 @@
 "use client";
 /**
- * MintButtonF4 — MAINNET
- * Phase 4 (Public, post-reserve): due gruppi di accesso (burn / sol).
- * - burn: tokenBurn 150k $BRIX + solPayment 0.18 SOL
- * - sol:  solFixedFee 0.12 + solPayment 0.18 = 0.30 SOL totale
- * mintLimit per wallet: 5 (guard id=2 — F4 prevede update guards fase pubblica).
- * CM separata da F1 — CANDY_MACHINE_ADDRESS va aggiornato con l'indirizzo F4.
+ * MintButtonF4 — Mainnet
+ * Phase 4 (Public, post-reserve): two guard groups (burn / sol).
+ *  - burn: tokenBurn 150k $BRIX + solPayment 0.18 SOL
+ *  - sol:  solFixedFee 0.12 + solPayment 0.18 = 0.30 SOL total
+ * mintLimit per wallet: 5.
  */
 
 import { useState, useCallback, useEffect } from "react";
@@ -23,8 +22,8 @@ const { mintV1, mplCandyMachine, safeFetchCandyGuard, fetchCandyMachine, findMin
 
 // ─── MAINNET CONFIG ──────────────────────────────────────────────────────────
 const RPC_ENDPOINT          = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
-const CANDY_MACHINE_ADDRESS = ""; // ⚠️ stessa di F1a (la CM è la stessa, cambiano solo i guards)
-const COLLECTION_ADDRESS    = ""; // ⚠️ AGGIORNARE
+const CANDY_MACHINE_ADDRESS = "";
+const COLLECTION_ADDRESS    = "";
 const DESTINATION           = "FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7";
 const BRIX_MINT             = "<MAINNET_BRIX_MINT>";
 const BRIX_DECIMALS         = 6;

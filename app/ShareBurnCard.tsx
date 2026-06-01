@@ -1,16 +1,9 @@
 "use client";
 
 /**
- * ShareBurnCard.tsx
- * -----------------
- * Standalone component — NOT yet wired into BurnButton.
- * Loads burn-card-bg.png from /public, overlays dynamic data via Canvas,
+ * ShareBurnCard
+ * Loads burn-card-bg.png from /public, overlays dynamic burn data via Canvas,
  * asks the user whether to download, then opens a pre-filled tweet.
- *
- * Props:
- *   amount  — number of $BRIX burned (e.g. 50000)
- *   wallet  — full wallet address string
- *   txSig   — transaction signature string
  */
 
 import { useCallback, useState } from "react";

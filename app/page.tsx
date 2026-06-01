@@ -1,15 +1,3 @@
-// Minimal Next.js page (App Router style)
-// Mission-driven layout: burn is the protagonist, NFTs are the mechanism.
-//
-// ===========================================================================
-// PRE-LAUNCH MODE — at launch, change only these things:
-//   1. TOKEN_MINT → real $BRIX address (live tracker auto-wires everything)
-//   2. CA "BRiXc0ntr4ct" → real contract address
-//   3. GET_BRIX_LINK → https://pump.fun/coin/<MINT_ADDRESS>
-//   4. MANTRA_TAIL → "EVERY MINT GETS US CLOSER." then "" post-mint
-//   5. TOP_BURNERS_DATA → wire to live leaderboard backend
-// ===========================================================================
-
 "use client";
 
 import Image from "next/image";
@@ -25,17 +13,16 @@ const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
-// ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = ""; // ← inserire indirizzo reale $BRIX al lancio
+const TOKEN_MINT     = "";
 const INITIAL_SUPPLY = 1_000_000_000;
 const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
-const REFRESH_BURN_MS = 30_000;  // burn counter: ogni 30s
-const REFRESH_SLOW_MS = 120_000; // prezzo/holders: ogni 2 min
+const REFRESH_BURN_MS = 30_000;
+const REFRESH_SLOW_MS = 120_000;
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── EXTERNAL LINKS ───────────────────────────────────────────────────────────
-const GET_BRIX_LINK = "#";  // → "https://pump.fun/coin/<MINT_ADDRESS>" at launch
+const GET_BRIX_LINK = "#";
 const X_LINK        = "https://x.com/BRIX_burns";
 
 // ── TOP BURNERS WORKER URL ────────────────────────────────────────────────────
@@ -82,9 +69,8 @@ const TRACKER_DEFAULT: TrackerData = {
 function useLiveTracker(): TrackerData {
   const [data, setData] = useState<TrackerData>({ ...TRACKER_DEFAULT, loading: false });
 
-  // ── FAST: supply/burn ogni 30s ───────────────────────────────────────────
   const loadBurn = useCallback(async () => {
-    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch, mostra zeri
+    if (!TOKEN_MINT) return;
     try {
       const supplyRes  = await fetch(HELIUS_RPC, {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -107,10 +93,8 @@ function useLiveTracker(): TrackerData {
     } catch { setData(prev => ({ ...prev, loading: false })); }
   }, []);
 
-  // ── SLOW: prezzo / holders ogni 2 min ────────────────────────────────────
   const loadSlow = useCallback(async () => {
-    if (!TOKEN_MINT) return; // pre-launch: nessuna fetch
-    // Prezzo + market cap + 24h change
+    if (!TOKEN_MINT) return;
     let priceNum = 0, mcapNum = 0, change24h = 0;
     try {
       const dexRes  = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
@@ -125,7 +109,7 @@ function useLiveTracker(): TrackerData {
       priceNum  = pair?.priceUsd ? Number(pair.priceUsd) : 0;
       mcapNum   = pair?.marketCap ?? pair?.fdv ?? 0;
       change24h = pair?.priceChange?.h24 ?? 0;
-    } catch { /* price non disponibile */ }
+    } catch { /* price unavailable */ }
 
     // Holders: Solscan primary, Helius fallback
     let holdersStr = "—";
@@ -157,7 +141,7 @@ function useLiveTracker(): TrackerData {
           cursor  = holdJson?.result?.cursor ?? null;
         } while (cursor);
         if (total > 0) holdersStr = fmtTokens(total);
-      } catch { /* holders non disponibili */ }
+      } catch { /* holders unavailable */ }
     }
 
     const changeSign = change24h >= 0 ? "+" : "";

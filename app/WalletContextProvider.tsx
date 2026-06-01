@@ -6,11 +6,9 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 
-// Importa gli stili del modal wallet (bottone "Select Wallet" ecc.)
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-// Cambia in WalletAdapterNetwork.Mainnet per la produzione
 const NETWORK   = WalletAdapterNetwork.Mainnet;
 const ENDPOINT  = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 // ─────────────────────────────────────────────────────────────────────────────

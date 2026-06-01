@@ -1,11 +1,9 @@
 "use client";
 /**
- * MintButtonF1a — MAINNET
- * Phase 1a (Early Access): allowList + tokenBurn 25k $BRIX. Niente SOL price.
+ * MintButtonF1a — Mainnet
+ * Phase 1a (Early Access): allowList + tokenBurn 25k $BRIX (no SOL price).
  * mintLimit per wallet: 2.
- *
- * Pre-requisito utente: wallet deve essere nell'allowList (Top Burners leaderboard).
- * Pre-requisito dApp: public/allowlist-proofs.json deve esistere (generato da F1-create-cm.js).
+ * Requires public/allowlist-proofs.json (merkle root + proofs for eligible wallets).
  */
 
 import { useState, useCallback, useEffect } from "react";
@@ -23,13 +21,13 @@ const { mintV1, mplCandyMachine, safeFetchCandyGuard, fetchCandyMachine, findMin
 
 // ─── MAINNET CONFIG ──────────────────────────────────────────────────────────
 const RPC_ENDPOINT          = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
-const CANDY_MACHINE_ADDRESS = ""; // ⚠️ AGGIORNARE post `F1-create-cm.js`
-const COLLECTION_ADDRESS    = ""; // ⚠️ AGGIORNARE post `01-create-collection.js` su mainnet
-const BRIX_MINT             = "<MAINNET_BRIX_MINT>";          // ⚠️ TODO post Pump.fun launch
-const BRIX_DECIMALS         = 6;                              // ⚠️ verificare
-const BRIX_BURN_QTY         = 25_000;                         // F1a: 25k $BRIX per mint
+const CANDY_MACHINE_ADDRESS = "";
+const COLLECTION_ADDRESS    = "";
+const BRIX_MINT             = "";
+const BRIX_DECIMALS         = 6;
+const BRIX_BURN_QTY         = 25_000;
 const ALLOWLIST_URL         = "/allowlist-proofs.json";
-const MAX_MINT_PHANTOM      = 2;                              // mintLimit F1a = 2
+const MAX_MINT_PHANTOM      = 2;
 const MAX_MINT_OTHER        = 2;
 function maxMintFor(walletName?: string): number {
   return walletName === "Phantom" ? MAX_MINT_PHANTOM : MAX_MINT_OTHER;

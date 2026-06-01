@@ -80,8 +80,6 @@ export default function BurnButton({ tokenMint }: { tokenMint: string }) {
     return () => { alive = false; };
   }, [publicKey, showPanel, tokenMint]);
 
-  // Safety modal is now triggered by the burn confirm button, not wallet connection
-
   // Close panel on disconnect
   useEffect(() => {
     if (!connected) { setShowPanel(false); setTxSig(null); setError(null); setTokenAccount(null); setBalance(null); }
