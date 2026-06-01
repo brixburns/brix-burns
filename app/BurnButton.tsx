@@ -13,7 +13,7 @@ import ShareBurnCard from "./ShareBurnCard";
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const HELIUS_RPC =
-  "https://devnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
+  "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const BRIX_DECIMALS    = 6;
 const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 // ─────────────────────────────────────────────────────────────────────────────

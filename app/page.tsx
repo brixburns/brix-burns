@@ -27,9 +27,9 @@ const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 // ⚡ Al lancio $BRIX: cambia solo TOKEN_MINT — il resto si auto-aggiorna.
-const TOKEN_MINT     = "4UqR5AxVrRRbE7USMacaJhiKURZFtNfp1VEPApUCtN87"; // ← inserire indirizzo reale $BRIX al lancio
+const TOKEN_MINT     = ""; // ← inserire indirizzo reale $BRIX al lancio
 const INITIAL_SUPPLY = 1_000_000_000;
-const HELIUS_RPC     = "https://devnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
+const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
 const REFRESH_BURN_MS = 30_000;  // burn counter: ogni 30s
 const REFRESH_SLOW_MS = 120_000; // prezzo/holders: ogni 2 min
