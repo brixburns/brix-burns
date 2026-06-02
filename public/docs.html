@@ -207,8 +207,20 @@
   .wallet-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
   .wallet-box .wb-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
   .wallet-box .wb-purpose { font-size: 12.5px; color: #a0a0ae; margin-bottom: 6px; line-height: 1.5; }
-  .wallet-box .wb-addr { font-family: var(--mono); font-size: 11.5px; color: #c0c0cc; word-break: break-all; padding: 6px 8px; background: var(--bg); border-radius: 4px; }
-  .wallet-box .wb-addr.wb-pending { color: var(--muted); font-style: italic; border: 1px dashed var(--border); background: transparent; }
+  .wallet-box .wb-addr { font-family: var(--mono); font-size: 11.5px; color: #c0c0cc; word-break: break-all; padding: 6px 8px; background: var(--bg); border-radius: 4px; display: block; text-decoration: none; transition: color .15s ease, background .15s ease; }
+  .wallet-box a.wb-addr:hover { color: #fff; background: var(--bg2); }
+
+  /* WALLET ADDRESS ROW (DexScreener-style: link + copy button) */
+  .wb-addr-row { display: flex; align-items: stretch; gap: 6px; margin-top: 4px; }
+  .wb-addr-link { flex: 1; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--bg); border-radius: 4px; font-family: var(--mono); font-size: 11.5px; color: #c0c0cc; text-decoration: none; word-break: break-all; transition: color .15s ease, background .15s ease; min-width: 0; }
+  .wb-addr-link:hover { color: #fff; background: var(--bg2); }
+  .wb-addr-link .wb-icon { flex-shrink: 0; opacity: 0.7; }
+  .wb-addr-link:hover .wb-icon { opacity: 1; }
+  .wb-addr-text { word-break: break-all; }
+  .wb-copy-btn { display: flex; align-items: center; justify-content: center; padding: 0 10px; background: var(--bg); border: none; border-radius: 4px; color: #888; cursor: pointer; transition: color .15s ease, background .15s ease; }
+  .wb-copy-btn:hover { color: #fff; background: var(--bg2); }
+  .wb-copy-btn.copied { color: #39ff14; }
+  .wb-icon { width: 14px; height: 14px; }
   .wallet-box.cold .wb-label { color: #6bb9ff; }
   .wallet-box.creator .wb-label { color: var(--accent2); }
   .wallet-box.ops .wb-label { color: var(--accent); }
@@ -361,7 +373,7 @@
           <div class="callout"><strong>If you can't verify it on-chain, we didn't say it.</strong></div>
 
           <h3>Dev allocation</h3>
-          <p>The team purchases <strong>5% of the initial supply</strong> from the Pump.fun bonding curve at deploy, using approximately 2 SOL.</p>
+          <p>The team purchases <strong>5% of the initial supply</strong> from the Pump.fun bonding curve at deploy, using approximately <strong>$215 USDC</strong>.</p>
           <ul>
             <li><strong>1% is burned immediately</strong> at launch — the first public burn transaction.</li>
             <li><strong>0.645% is burned to acquire the 43 reserve NFTs</strong> (6,450,000 $BRIX). These NFTs come from the F4 pool — 25 are airdropped to Top Burners, 18 are held by the team for marketing, giveaways, and community airdrops.</li>
@@ -370,9 +382,19 @@
           </ul>
           <p>The dev wallet is not a fund. It exists only as a temporary holding for tokens already committed to the burn.</p>
 
+          <h3>Why USDC pair (not SOL)</h3>
+          <p>$BRIX launches on Pump.fun's <strong>USDC-paired bonding curve</strong>, introduced by Pump.fun to stabilize new-token pricing and reduce reliance on SOL price movements. Practical implications for $BRIX:</p>
+          <ul>
+            <li><strong>Initial market cap:</strong> $4,000 USDC (Pump.fun's new default for USDC pairs).</li>
+            <li><strong>Bonding curve graduation:</strong> $58,000 USDC.</li>
+            <li><strong>Trading fees:</strong> the creator wallet receives Pump.fun creator fees <strong>in USDC</strong> on every trade.</li>
+            <li><strong>Buyback-and-burn cycles:</strong> spend accumulated USDC to reacquire and destroy $BRIX from the market.</li>
+          </ul>
+          <p>This decouples the $BRIX entry price from SOL volatility and lets the buyback-and-burn flywheel run on a stable-value asset.</p>
+
           <h3>Operating revenue</h3>
           <p>The project takes a transparent <strong>5% operating fee</strong> from the SOL collected at each mint phase. This funds hosting, domain renewals, security tools, and emergency reserves. The fee is publicly declared in the rewards split and applies before any other distribution.</p>
-          <p>Pump.fun trading fees (1% of all $BRIX trades, paid directly to the creator wallet) are <strong>not retained</strong>. Every 5 SOL accumulated in trading fees triggers a buyback-and-burn cycle. Fees in, $BRIX out, permanently destroyed.</p>
+          <p>Pump.fun creator trading fees, paid directly to the creator wallet in <strong>USDC</strong>, are <strong>not retained</strong>. Every <strong>$500 USDC</strong> accumulated in trading fees triggers a buyback-and-burn cycle. Fees in, $BRIX out, permanently destroyed.</p>
 
           <h3>Wallet structure</h3>
           <p>Three wallets, three roles, all public:</p>
@@ -380,19 +402,43 @@
           <div class="wallet-box cold">
             <div class="wb-label">COLD / TREASURY (Ledger)</div>
             <div class="wb-purpose">Receives all SOL from NFT mints (set as Candy Machine destination) and all secondary royalties (6.9%). Hardware-wallet-controlled, rarely online.</div>
-            <div class="wb-addr wb-pending">Published at token launch — final and immutable</div>
+            <div class="wb-addr-row">
+              <a class="wb-addr-link" href="https://solscan.io/account/FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7" target="_blank" rel="noopener noreferrer" title="View on Solscan">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span class="wb-addr-text">FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7</span>
+              </a>
+              <button class="wb-copy-btn" type="button" data-copy="FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7" aria-label="Copy address" title="Copy address">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
           </div>
 
           <div class="wallet-box creator">
             <div class="wb-label">CREATOR / PUMP.FUN</div>
-            <div class="wb-purpose">Wallet used to deploy $BRIX on Pump.fun. Receives 1% trading fees automatically. Holds initial dev allocation pre-burn. Buyback-and-burn cycles execute from here.</div>
-            <div class="wb-addr wb-pending">Published at token launch — final and immutable</div>
+            <div class="wb-purpose">Wallet used to deploy $BRIX on Pump.fun. Receives Pump.fun creator trading fees automatically (paid in USDC). Holds initial dev allocation pre-burn. Buyback-and-burn cycles execute from here.</div>
+            <div class="wb-addr-row">
+              <a class="wb-addr-link" href="https://solscan.io/account/9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N" target="_blank" rel="noopener noreferrer" title="View on Solscan">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span class="wb-addr-text">9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N</span>
+              </a>
+              <button class="wb-copy-btn" type="button" data-copy="9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N" aria-label="Copy address" title="Copy address">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
           </div>
 
           <div class="wallet-box ops">
             <div class="wb-label">OPERATIONS</div>
             <div class="wb-purpose">Small hot wallet for frequent transactions: NFT airdrops to Top Burners, hosting payments, domain renewals. Kept at minimal balance.</div>
-            <div class="wb-addr wb-pending">Published at token launch — final and immutable</div>
+            <div class="wb-addr-row">
+              <a class="wb-addr-link" href="https://solscan.io/account/AHw6uBffL9L2FdJHnHHvY97Go7B2up2hiqgvYtN1i6f2" target="_blank" rel="noopener noreferrer" title="View on Solscan">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span class="wb-addr-text">AHw6uBffL9L2FdJHnHHvY97Go7B2up2hiqgvYtN1i6f2</span>
+              </a>
+              <button class="wb-copy-btn" type="button" data-copy="AHw6uBffL9L2FdJHnHHvY97Go7B2up2hiqgvYtN1i6f2" aria-label="Copy address" title="Copy address">
+                <svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
           </div>
 
           <h3>Treasury principles</h3>
@@ -404,7 +450,7 @@
             <li>Treasury operations may be expanded to multisig (Squads) post-launch if the project grows enough to warrant it.</li>
           </ul>
 
-          <div class="note">Wallet addresses above are placeholders. Final addresses will be published before the token launch and will not change afterward. Always verify addresses on this page before sending or interacting with any wallet.</div>
+          <div class="note">The three addresses above are final and immutable. Always verify them against this page (each address links to Solscan) before sending or interacting with any wallet.</div>
         </div>
       </div>
     </div>
@@ -465,7 +511,7 @@
             <li><strong>Mint burns</strong> — each NFT mint destroys $BRIX directly via the SPL Token burn instruction. The required amount doubles per phase: 25k → 50k → 100k → 150k.</li>
             <li><strong>SOL alternative path</strong> — users who choose the SOL-only mint path trigger an automatic buyback-and-burn with 50% of the access fee.</li>
             <li><strong>Reward pool buyback</strong> — 15% of the collected SOL pool is allocated to ongoing buyback-and-burn after each phase reveal.</li>
-            <li><strong>Pump.fun trading fees</strong> — every 5 SOL accumulated from Pump.fun trading fees triggers a buyback-and-burn cycle.</li>
+            <li><strong>Pump.fun trading fees</strong> — every $500 USDC accumulated from Pump.fun trading fees (paid in USDC) triggers a buyback-and-burn cycle.</li>
             <li><strong>Secondary royalties</strong> — 6.9% of every TRIXSTER resale on secondary markets funds the next pool, fueling more burn.</li>
             <li><strong>Voluntary burns</strong> — holders may burn $BRIX directly at any time. Voluntary burns count toward the Top Burners leaderboard.</li>
           </ul>
@@ -931,6 +977,33 @@
     overlay.classList.toggle('open');
   });
   overlay.addEventListener('click', closeSidebar);
+
+  // Copy-to-clipboard for wallet addresses
+  document.querySelectorAll('.wb-copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const addr = btn.getAttribute('data-copy');
+      if (!addr) return;
+      try {
+        await navigator.clipboard.writeText(addr);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = addr;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+      }
+      btn.classList.add('copied');
+      const original = btn.innerHTML;
+      btn.innerHTML = '<svg class="wb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = original;
+      }, 1500);
+    });
+  });
 </script>
 </body>
 </html>
