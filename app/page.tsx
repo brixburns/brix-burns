@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 
+// import MintButton from "./MintButtons/MintButtonF1a";
 import dynamic from "next/dynamic";
 const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 
@@ -27,6 +28,11 @@ const X_LINK        = "https://x.com/BRIX_burns";
 
 // ── TOP BURNERS WORKER URL ────────────────────────────────────────────────────
 const TOP_BURNERS_URL = "https://brix-top-burners.420losrs.workers.dev/top-burners";
+
+// ── WALLETS EXCLUDED FROM LEADERBOARD (team) ─────────────────────────────────
+const EXCLUDED_WALLETS: string[] = [
+  "9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N",
+];
 
 // ── STATS BAR TYPE ────────────────────────────────────────────────────────────
 type StatItem = { label: string; value: string; live?: boolean };
@@ -242,11 +248,15 @@ function useTopBurners() {
         const res  = await fetch(TOP_BURNERS_URL);
         const data: WorkerBurner[] = await res.json();
         if (!cancelled) {
-          setBurners(data.map(d => ({
-            rank:   d.rank,
-            wallet: d.wallet,
-            burned: fmtTokens(d.burned),
-          })));
+          setBurners(
+            data
+              .filter(d => !EXCLUDED_WALLETS.includes(d.wallet))
+              .map((d, i) => ({
+                rank:   i + 1,
+                wallet: d.wallet,
+                burned: fmtTokens(d.burned),
+              }))
+          );
           setLoading(false);
         }
       } catch {
