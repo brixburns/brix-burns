@@ -15,7 +15,9 @@ import ShareBurnCard from "./ShareBurnCard";
 const HELIUS_RPC =
   "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const BRIX_DECIMALS    = 6;
-const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+// Token-2022 program (Pump.fun launches use spl-token-2022, not legacy SPL Token).
+// BurnChecked layout (opcode 15, u64 amount LE, u8 decimals) is identical on both programs.
+const TOKEN_PROGRAM_ID = new PublicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb");
 // ─────────────────────────────────────────────────────────────────────────────
 
 function burnCheckedIx(
