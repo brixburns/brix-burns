@@ -31,7 +31,8 @@ const TOP_BURNERS_URL = "https://brix-top-burners.420losrs.workers.dev/top-burne
 
 // ── WALLETS EXCLUDED FROM LEADERBOARD (team) ─────────────────────────────────
 const EXCLUDED_WALLETS: string[] = [
-  "9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N",
+  "9UTzAk9qEXgRTNbmVrawjJBgL5T9PyfNrAEJPrynix5N", // CREATOR / PUMP.FUN
+  "6WM4d2VfxMogo2Dd4URSBczLP9jopMRwwtGARjrn6eS7", // dev operations (dev allocation burns)
 ];
 
 // ── STATS BAR TYPE ────────────────────────────────────────────────────────────
