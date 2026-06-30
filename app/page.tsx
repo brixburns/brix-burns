@@ -14,7 +14,7 @@ const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
-const TOKEN_MINT     = "";
+const TOKEN_MINT     = "HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump";
 const INITIAL_SUPPLY = 1_000_000_000;
 const HELIUS_RPC     = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const TARGET_PERCENT  = 90;
@@ -23,7 +23,7 @@ const REFRESH_SLOW_MS = 120_000;
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── EXTERNAL LINKS ───────────────────────────────────────────────────────────
-const GET_BRIX_LINK = "#";
+const GET_BRIX_LINK = "https://pump.fun/coin/HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump";
 const X_LINK        = "https://x.com/BRIX_burns";
 
 // ── TOP BURNERS WORKER URL ────────────────────────────────────────────────────
@@ -510,7 +510,7 @@ export default function BrixPage() {
 
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copy = useCallback(() => {
-    navigator.clipboard.writeText("BRiXc0ntr4ct");
+    navigator.clipboard.writeText("HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump");
     setCopied(true);
     copyTimerRef.current = setTimeout(() => setCopied(false), 1600);
   }, []);
@@ -531,8 +531,8 @@ export default function BrixPage() {
           $BRIX
         </button>
 
-        <div className="ca-badge" onClick={copy}>
-          BRiXc0ntr4ct
+        <div className="ca-badge" onClick={copy} title="HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump">
+          HCYU…y4pump
           <button className="copy-btn" aria-label="Copy address">
             <CopyIcon done={copied}/>
           </button>
