@@ -53,6 +53,7 @@ nav {
 .nav-links .nav-mint:hover { color: var(--white); }
 .nav-links .nav-burners { color: var(--orange); font-weight: bold; }
 .nav-links .nav-burners:hover { color: var(--white); }
+.nav-links .nav-docs, .nav-dropdown a.dropdown-docs { color: var(--white); }
 
 .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; position: relative; }
 @media (min-width: 641px) { .nav-right-group { margin-left: 0; } }
@@ -101,19 +102,9 @@ nav {
 .stat-item { flex: 0 0 auto; text-align: center; padding: 8px 22px; border-right: 1px solid var(--border); }
 .s-label { font-size: .55rem; color: var(--dim); letter-spacing: .1em; }
 .s-value { font-family: var(--font-orb); font-size: .78rem; color: var(--white); margin-top: 2px; white-space: nowrap; }
-.s-live  { display: flex; align-items: center; gap: 5px; color: #ff3333 !important; }
-.dot-red { width: 6px; height: 6px; border-radius: 50%; background: #ff3333; flex-shrink: 0; animation: pulse 1.2s ease-in-out infinite; }
+.s-live   { display: flex; align-items: center; gap: 5px; color: var(--green) !important; }
+.dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; box-shadow: 0 0 6px var(--green); animation: pulse 1.2s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
-
-/* ══ LAUNCH BANNER ══ */
-.launch-banner {
-  text-align: center; padding: 8px 24px;
-  font-family: var(--font-mono); font-size: 1.5rem;
-  letter-spacing: .25em; color: var(--green);
-  border-bottom: 1px solid var(--border);
-  animation: blink-banner 1.4s ease-in-out infinite;
-  background: rgba(57,255,20,.03);
-}
 @keyframes blink-banner { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 
 /* ══ HERO ══ */

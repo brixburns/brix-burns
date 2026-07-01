@@ -304,7 +304,7 @@ function StatsBar({ stats }: { stats: StatItem[] }) {
           <div className="stat-item" key={`${s.label}-${i}`}>
             <div className="s-label">{s.label || "\u00a0"}</div>
             {s.live ? (
-              <div className="s-value s-live"><span className="dot-red"/>SOON</div>
+              <div className="s-value s-live"><span className="dot-live"/>LIVE</div>
             ) : (
               <div className="s-value">{s.value}</div>
             )}
@@ -548,7 +548,7 @@ export default function BrixPage() {
           <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
           <li><button className="nav-burners" onClick={() => scrollTo("sec-top-burners")}>TOP BURNERS</button></li>
           <li><button onClick={() => scrollTo("sec-faq")}>FAQ</button></li>
-          <li><a href="/docs.html" target="_blank" rel="noopener noreferrer">DOCS</a></li>
+          <li><a href="/docs.html" target="_blank" rel="noopener noreferrer" className="nav-docs">DOCS</a></li>
         </ul>
 
         <div className="nav-right-group">
@@ -578,8 +578,6 @@ export default function BrixPage() {
       </nav>
 
       <StatsBar stats={liveStats}/>
-
-      <div className="launch-banner">[ LAUNCHING SOON ]</div>
 
       {/* == HERO =========================================================== */}
       <section className="hero" id="sec-mission">
