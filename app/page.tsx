@@ -11,7 +11,7 @@ const BurnButton = dynamic(() => import("./BurnButton"), { ssr: false });
 // ── MODULAR MANTRA ───────────────────────────────────────────────────────────
 // Change this single constant to update the mantra everywhere on the page.
 // Post-mint: set to "" to display only "THE GOAL IS ZERO." (no tail).
-const MANTRA_TAIL = "EVERY MINT GETS US CLOSER.";
+const MANTRA_TAIL = ""; // was: "EVERY MINT GETS US CLOSER."
 
 // ── LIVE TRACKER CONFIG ───────────────────────────────────────────────────────
 const TOKEN_MINT     = "HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump";
@@ -379,7 +379,7 @@ function TopBurnersSection() {
               <th>#</th>
               <th>WALLET</th>
               <th>$BRIX BURNED</th>
-              <th>AIRDROP</th>
+              {/* <th>AIRDROP</th> */}
             </tr>
           </thead>
           <tbody>
@@ -388,7 +388,7 @@ function TopBurnersSection() {
                 <td className="tb-rank">{String(r.rank).padStart(2, "0")}</td>
                 <td className="tb-wallet">{r.wallet}</td>
                 <td className="tb-burned">{r.burned}</td>
-                <td className="tb-reward">2 NFT</td>
+                {/* <td className="tb-reward">2 NFT</td> */}
               </tr>
             ))}
           </tbody>
@@ -409,7 +409,7 @@ function TopBurnersSection() {
                 <th>#</th>
                 <th>WALLET</th>
                 <th>$BRIX BURNED</th>
-                <th>AIRDROP</th>
+                {/* <th>AIRDROP</th> */}
               </tr>
             </thead>
             <tbody>
@@ -418,7 +418,7 @@ function TopBurnersSection() {
                   <td className="tb-rank">{String(r.rank).padStart(2, "0")}</td>
                   <td className="tb-wallet">{r.wallet}</td>
                   <td className="tb-burned">{r.burned}</td>
-                  <td className="tb-reward">1 NFT</td>
+                  {/* <td className="tb-reward">1 NFT</td> */}
                 </tr>
               ))}
             </tbody>
@@ -543,12 +543,12 @@ export default function BrixPage() {
           <li><button onClick={() => scrollTo("top")}>HOME</button></li>
           <li><button onClick={() => scrollTo("sec-mission")}>MISSION</button></li>
           <li><button className="nav-burn-link" onClick={() => scrollTo("sec-jackpot")}>BURN $BRIX</button></li>
-          <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li>
-          <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li>
-          <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li>
+          {/* <li><button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button></li> */}
+          {/* <li><button className="nav-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button></li> */}
+          {/* <li><button className="nav-mint" onClick={() => scrollTo("sec-mint")}>MINT</button></li> */}
           <li><button className="nav-burners" onClick={() => scrollTo("sec-top-burners")}>TOP BURNERS</button></li>
-          <li><button onClick={() => scrollTo("sec-faq")}>FAQ</button></li>
-          <li><a href="/docs.html" target="_blank" rel="noopener noreferrer" className="nav-docs">DOCS</a></li>
+          {/* <li><button onClick={() => scrollTo("sec-faq")}>FAQ</button></li> */}
+          {/* <li><a href="/docs.html" target="_blank" rel="noopener noreferrer" className="nav-docs">DOCS</a></li> */}
         </ul>
 
         <div className="nav-right-group">
@@ -566,12 +566,12 @@ export default function BrixPage() {
               <button onClick={() => scrollTo("top")}>HOME</button>
               <button onClick={() => scrollTo("sec-mission")}>MISSION</button>
               <button className="dd-burn-link" onClick={() => { scrollTo("sec-jackpot"); setMenuOpen(false); }}>BURN $BRIX</button>
-              <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button>
-              <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button>
-              <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button>
+              {/* <button onClick={() => scrollTo("sec-how")}>HOW IT WORKS</button> */}
+              {/* <button className="dd-trixster" onClick={() => scrollTo("sec-trixster")}>TRIXSTER</button> */}
+              {/* <button className="dd-mint" onClick={() => scrollTo("sec-mint")}>MINT</button> */}
               <button className="dd-burners" onClick={() => scrollTo("sec-top-burners")}>TOP BURNERS</button>
-              <button onClick={() => scrollTo("sec-faq")}>FAQ</button>
-              <a href="/docs.html" target="_blank" rel="noopener noreferrer" className="dropdown-docs">DOCS</a>
+              {/* <button onClick={() => scrollTo("sec-faq")}>FAQ</button> */}
+              {/* <a href="/docs.html" target="_blank" rel="noopener noreferrer" className="dropdown-docs">DOCS</a> */}
             </div>
           )}
         </div>
@@ -639,7 +639,7 @@ export default function BrixPage() {
             FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
           </a>
         </div>
-        <div className="tl-sub">FOUR MINT PHASES. <span className="tw">3,333</span> NFTS. ONE MISSION.</div>
+        <div className="tl-sub">1 BILLION TOKENS. <span className="tw">3333</span> NFTS. ONE MISSION.</div>
       </div>
 
       {/* == PILLARS ======================================================== */}
@@ -673,8 +673,8 @@ export default function BrixPage() {
           <div className="num-label">NFTS</div>
         </div>
         <div className="number-cell" id="sec-jackpot" style={{ scrollMarginTop: "200px" }}>
-          <div className="big-num n-gold">30</div>
-          <div className="num-label">JACKPOTS</div>
+          <div className="big-num n-gold">0</div>
+          <div className="num-label">IS THE GOAL</div>
         </div>
       </div>
 
@@ -683,7 +683,7 @@ export default function BrixPage() {
       </div>
 
       {/* == BOTTOM GRID ==================================================== */}
-      <div className="bottom-grid">
+      <div className="bottom-grid" style={{ display: "none" }}>
 
         <div className="bottom-card" id="sec-how">
           <h2 className="card-title">[ HOW IT WORKS ]</h2>
@@ -797,15 +797,13 @@ export default function BrixPage() {
       <TopBurnersSection/>
 
       {/* == FAQ ============================================================ */}
-      <FaqSection/>
+      {/* <FaqSection/> */}
 
       <footer>
         <div className="footer-line">// THE GOAL IS ZERO</div>
         <div className="footer-brand">$BRIX BURNS</div>
         <div className="footer-disclaimer">
-          Nothing on this site constitutes financial advice. Cryptocurrency and NFT markets involve risk.
-          Burns are permanent. Mint payments are final. Reward amounts depend on actual phase performance.
-          Read the <a href="/docs.html#safety" className="footer-link-gold">safety section</a> before participating.
+          Nothing on this site constitutes financial advice. Cryptocurrency and NFT markets involve risk. Burns are permanent.
         </div>
         <div className="footer-corners">
           <div className="f-corner fl"/>
