@@ -639,7 +639,7 @@ export default function BrixPage() {
             FOLLOW &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
           </a>
         </div>
-        <div className="tl-sub">1 BILLION TOKENS. <span className="tw">3333</span> NFTS. ONE MISSION.</div>
+        <div className="tl-sub">ONE TOKEN. ONE MISSION.</div>
       </div>
 
       {/* == PILLARS ======================================================== */}
@@ -647,33 +647,33 @@ export default function BrixPage() {
         <div className="pillar align-left">
           <div className="pc tl"/>
           <div className="pillar-tag">[ BURN ]</div>
-          <div className="pillar-title p-burn">BURN THE SUPPLY.</div>
-          <div className="pillar-body">Every mint destroys $BRIX. Every sale destroys $BRIX. The supply only moves one way.</div>
+          <div className="pillar-title p-burn">THE TOKEN BURNS.</div>
+          <div className="pillar-body">$BRIX was built to destroy itself. Every burn is permanent, on-chain, irreversible. The supply only moves one way.</div>
         </div>
         <div className="pillar align-center">
           <div className="pillar-tag">[ FUEL ]</div>
-          <div className="pillar-title p-fuel">MINT THE FIRE.</div>
-          <div className="pillar-body">TRIXSTER NFTs are the mechanism. Every mint feeds the burn and the reward pool.</div>
+          <div className="pillar-title p-fuel">EVERYTHING WE BUILD FEEDS THE FIRE.</div>
+          <div className="pillar-body">Collections. Projects. Experiments. Everything under $BRIX generates burn. One token. Infinite ways to destroy it.</div>
         </div>
         <div className="pillar align-right">
           <div className="pc br"/>
           <div className="pillar-tag">[ ZERO ]</div>
           <div className="pillar-title p-zero">REACH ZERO.</div>
-          <div className="pillar-body">90% of supply destroyed is the target. Continuous burn outlives the mint event.</div>
+          <div className="pillar-body">90% of supply destroyed is the target. Continuous burn outlives any single project. The goal doesn't expire.</div>
         </div>
       </div>
 
       <div className="numbers-row">
         <div className="number-cell">
-          <div className="big-num n-orange">90%</div>
-          <div className="num-label">BURN TARGET</div>
+          <div className="big-num n-white">0ne</div>
+          <div className="num-label">TOKEN</div>
         </div>
         <div className="number-cell">
-          <div className="big-num n-white">3,333</div>
-          <div className="num-label">NFTS</div>
+          <div className="big-num n-orange">90%</div>
+          <div className="num-label">TO BURN</div>
         </div>
         <div className="number-cell" id="sec-jackpot" style={{ scrollMarginTop: "200px" }}>
-          <div className="big-num n-gold">0</div>
+          <div className="big-num n-gold">Zer0</div>
           <div className="num-label">IS THE GOAL</div>
         </div>
       </div>
