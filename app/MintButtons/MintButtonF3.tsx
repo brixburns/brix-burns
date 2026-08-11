@@ -2,8 +2,8 @@
 /**
  * MintButtonF3 — Mainnet
  * Phase 3: two guard groups (burn / sol).
- *  - burn: tokenBurn 100k $BRIX + solPayment 0.12 SOL
- *  - sol:  solFixedFee 0.10 + solPayment 0.12 = 0.22 SOL total
+ *  - burn: token2022Payment 100k $BRIX + solPayment 0.12 SOL
+ *  - sol:  solFixedFee 0.22 + solPayment 0.12 = 0.34 SOL total
  * mintLimit per wallet: 5.
  */
 
@@ -24,13 +24,16 @@ const { mintV1, mplCandyMachine, safeFetchCandyGuard, fetchCandyMachine, findMin
 const RPC_ENDPOINT          = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const CANDY_MACHINE_ADDRESS = "";
 const COLLECTION_ADDRESS    = "";
-const DESTINATION           = "FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7";
-const BRIX_MINT             = "<MAINNET_BRIX_MINT>";
+const SOL_DESTINATION       = "FHYpiK2vdWGvMco32XG4dos3S8Ch4TG7PuHvfomuAKM7";
+const ACCESS_FEE_DESTINATION = "8jpxVWcgnNEqwwVHwnSttQS43PTegEa6pzQSbjCHTfzY";
+const BRIX_MINT             = "HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump";
 const BRIX_DECIMALS         = 6;
 const BRIX_BURN_QTY         = 100_000;
+const CUSTODY_ATA           = "DosquuNYM4Dp1AN9HYh9aew11QhXJJnZTJCznJWPdr9m";
+const TOKEN_2022_PROGRAM_ID = publicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb");
 const MINT_PRICE            = 0.12;
-const BURN_FEE              = 0.10;  // SOL fee extra per gruppo "sol"
-const MINTLIMIT_ID          = 1;     // CM separata da F1 — id=1 non conflicta
+const BURN_FEE              = 0.22;
+const MINTLIMIT_ID          = 1;
 const MAX_MINT_PHANTOM      = 5;
 const MAX_MINT_OTHER        = 5;
 function maxMintFor(walletName?: string): number {
@@ -171,7 +174,7 @@ export default function MintButtonF3() {
 
       // Pre-flight $BRIX (solo gruppo burn)
       if (selectedGroup === "burn") {
-        const ata = findAssociatedTokenPda(umi, { mint: publicKey(BRIX_MINT), owner: umi.identity.publicKey });
+        const ata = findAssociatedTokenPda(umi, { mint: publicKey(BRIX_MINT), owner: umi.identity.publicKey, tokenProgramId: TOKEN_2022_PROGRAM_ID });
         const tokenAccount = await safeFetchToken(umi, ata);
         if (!tokenAccount) throw new Error("BrixAtaMissing");
         const needRaw = BigInt(BRIX_BURN_QTY) * BigInt(qty) * BigInt(10) ** BigInt(BRIX_DECIMALS);
@@ -183,8 +186,8 @@ export default function MintButtonF3() {
       }
 
       const mintArgs = selectedGroup === "burn"
-        ? { tokenBurn:  some({ mint: publicKey(BRIX_MINT) }), solPayment: some({ destination: publicKey(DESTINATION) }), mintLimit: some({ id: MINTLIMIT_ID }) }
-        : { solFixedFee: some({ destination: publicKey(DESTINATION) }), solPayment: some({ destination: publicKey(DESTINATION) }), mintLimit: some({ id: MINTLIMIT_ID }) };
+        ? { token2022Payment: some({ mint: publicKey(BRIX_MINT), destinationAta: publicKey(CUSTODY_ATA) }), solPayment: some({ destination: publicKey(SOL_DESTINATION) }), mintLimit: some({ id: MINTLIMIT_ID }) }
+        : { solFixedFee: some({ destination: publicKey(ACCESS_FEE_DESTINATION) }), solPayment: some({ destination: publicKey(SOL_DESTINATION) }), mintLimit: some({ id: MINTLIMIT_ID }) };
 
       const assetSigners = Array.from({ length: qty }, () => generateSigner(umi));
       const builders = assetSigners.map(assetSigner =>

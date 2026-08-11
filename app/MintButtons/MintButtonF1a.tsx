@@ -1,7 +1,7 @@
 "use client";
 /**
  * MintButtonF1a — Mainnet
- * Phase 1a (Early Access): allowList + tokenBurn 25k $BRIX (no SOL price).
+ * Phase 1a (Early Access): allowList + token2022Payment 25k $BRIX (no SOL price).
  * mintLimit per wallet: 2.
  * Requires public/allowlist-proofs.json (merkle root + proofs for eligible wallets).
  */
@@ -23,9 +23,11 @@ const { mintV1, mplCandyMachine, safeFetchCandyGuard, fetchCandyMachine, findMin
 const RPC_ENDPOINT          = "https://mainnet.helius-rpc.com/?api-key=a118acee-0734-42a5-a29f-2f330eb0c49c";
 const CANDY_MACHINE_ADDRESS = "";
 const COLLECTION_ADDRESS    = "";
-const BRIX_MINT             = "";
+const BRIX_MINT             = "HCYUytzPBSRBJxemsyDEe9tHxg86cViV3Y2ZRny4pump";
 const BRIX_DECIMALS         = 6;
 const BRIX_BURN_QTY         = 25_000;
+const CUSTODY_ATA           = "DosquuNYM4Dp1AN9HYh9aew11QhXJJnZTJCznJWPdr9m";
+const TOKEN_2022_PROGRAM_ID = publicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb");
 const ALLOWLIST_URL         = "/allowlist-proofs.json";
 const MAX_MINT_PHANTOM      = 2;
 const MAX_MINT_OTHER        = 2;
@@ -213,7 +215,7 @@ export default function MintButtonF1a() {
       if (balance.basisPoints < minSol) throw new Error("NotEnoughSOL");
 
       // Pre-flight $BRIX
-      const ata = findAssociatedTokenPda(umi, { mint: publicKey(BRIX_MINT), owner: umi.identity.publicKey });
+      const ata = findAssociatedTokenPda(umi, { mint: publicKey(BRIX_MINT), owner: umi.identity.publicKey, tokenProgramId: TOKEN_2022_PROGRAM_ID });
       const tokenAccount = await safeFetchToken(umi, ata);
       if (!tokenAccount) throw new Error("BrixAtaMissing");
       const needRaw = BigInt(BRIX_BURN_QTY) * BigInt(qty) * BigInt(10) ** BigInt(BRIX_DECIMALS);
@@ -244,7 +246,7 @@ export default function MintButtonF1a() {
 
       const mintArgs = {
         allowList: some({ merkleProof, merkleRoot }),
-        tokenBurn: some({ mint: publicKey(BRIX_MINT) }),
+        token2022Payment: some({ mint: publicKey(BRIX_MINT), destinationAta: publicKey(CUSTODY_ATA) }),
         mintLimit: some({ id: 1 }),
       };
 
