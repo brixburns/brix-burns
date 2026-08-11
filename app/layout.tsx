@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Share_Tech_Mono, Barlow_Condensed, Orbitron } from "next/font/google";
 import "./globals.css";
-import WalletContextProvider from "./WalletContextProvider";
 
 const shareTechMono = Share_Tech_Mono({
   weight: "400",
@@ -27,7 +26,7 @@ const orbitron = Orbitron({
 export const metadata: Metadata = {
   title: "$BRIX Burns",
   description:
-    "Born from the blockchain, $BRIX by $BRIX. 3,333 unique NFTs on Solana — forged in fire, fueled by $BRIX.",
+    "A token engineered to burn itself. The goal is to halve it.",
 };
 
 export default function RootLayout({
@@ -45,7 +44,7 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body>
-        <WalletContextProvider>{children}</WalletContextProvider>
+        {children}
       </body>
     </html>
   );
