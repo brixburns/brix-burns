@@ -27,6 +27,8 @@ const en = {
   getBrixBtn: "GET $BRIX",
   openseaBtn: "TRIXSTERS ON OPENSEA",
   notLive: "Not live yet",
+  openseaMine: "SEE YOUR TRIXSTERS ON OPENSEA ›",
+  openseaCollection: "BROWSE THE COLLECTION ON OPENSEA ›",
   footerLine: "// THE FLOOR RISES.",
   disclaimer: "Nothing on this site constitutes financial advice. The floor is backing, not a guaranteed price. Crypto and NFT markets involve risk. Burns are permanent.",
 
@@ -148,6 +150,8 @@ const zh: Dict = {
   getBrixBtn: "购买 $BRIX",
   openseaBtn: "在 OPENSEA 查看 TRIXSTER",
   notLive: "尚未上线",
+  openseaMine: "在 OPENSEA 查看你的 TRIXSTER ›",
+  openseaCollection: "在 OPENSEA 浏览整个系列 ›",
   footerLine: "// 地板价上升。",
   disclaimer: "本网站内容不构成任何投资建议。地板价是储备支撑，并非保证价格。加密货币与 NFT 市场存在风险。销毁不可撤销。",
 

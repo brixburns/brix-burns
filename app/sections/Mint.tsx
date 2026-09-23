@@ -39,7 +39,15 @@ export default function Mint({ v }: { v?: VaultState }) {
   const busy = tx.state.status === "signing" || tx.state.status === "pending";
 
   if (v && !v.mintOpen) {
-    return <Section id="mint" title={t.mintTitle} lead={t.mintClosedBody}>{null}</Section>;
+    return (
+      <Section id="mint" title={t.mintTitle} lead={t.mintClosedBody}>
+        {NET.opensea && (
+          <div className="mint-action">
+            <a className="btn btn-outline btn-opensea" href={NET.opensea} target="_blank" rel="noopener noreferrer">{t.openseaCollection}</a>
+          </div>
+        )}
+      </Section>
+    );
   }
 
   const approve = () => (setLast("approve"), tx.send({

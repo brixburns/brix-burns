@@ -34,6 +34,9 @@ function useOwned(address: string | undefined, minted: number) {
   return { owned, loading: isLoading };
 }
 
+/** The holder's OpenSea profile: it lists their Trixsters among everything else they own. */
+const openseaProfile = (address: string) => `https://opensea.io/${address}`;
+
 /** Confirmed cracks the relayer has yet to pay (worker GET /status). */
 function usePendingPayouts(): number | undefined {
   const { data } = useQuery({
@@ -139,6 +142,9 @@ export default function Crack({ v }: { v?: VaultState }) {
           </WalletGate>
           <TxStatus state={tx.state} done={t.crackDone}/>
           <div className="qty-note">{t.crackEoa}</div>
+          {NET.opensea && w.address && (
+            <a className="link-btn link-opensea" href={openseaProfile(w.address)} target="_blank" rel="noopener noreferrer">{t.openseaMine}</a>
+          )}
           {!!pending && <div className="qty-note pending-note">{t.pendingDowries(pending)}</div>}
         </div>
       </div>

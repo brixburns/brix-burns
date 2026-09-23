@@ -809,3 +809,9 @@ html { scroll-behavior: smooth; }
 .steps-note { font-size: .7rem; color: var(--gold); letter-spacing: .08em; border: 1px solid rgba(204,255,0,.35); background: rgba(204,255,0,.06); padding: 7px 14px; text-align: center; }
 
 .tagline-top { padding: 34px 24px 0; }
+
+/* ══ SITE V2 — OpenSea: outline in OpenSea blue ══ */
+:root { --opensea: #2081e2; }
+.btn-opensea { border-color: var(--opensea); }
+.btn-opensea:hover { border-color: var(--opensea); color: var(--opensea); box-shadow: 0 0 16px rgba(32,129,226,.35); }
+.link-opensea { color: var(--opensea); }

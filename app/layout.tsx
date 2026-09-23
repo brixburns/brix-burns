@@ -24,10 +24,22 @@ const orbitron = Orbitron({
   display: "swap",
 });
 
+const DESCRIPTION =
+  "$BRIX on BNB Chain: every token backed by a BNB reserve. Burn it and the floor rises. Plus 2,222 Trixsters on Robinhood Chain, each holding a dowry.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://brix-burns.com"),
   title: "$BRIX Burns",
-  description:
-    "$BRIX on BNB Chain: every token backed by a BNB reserve. Burn it and the floor rises. Plus 2,222 Trixsters on Robinhood Chain, each holding a dowry.",
+  description: DESCRIPTION,
+  // The image is rendered at build time by app/og.png/route.tsx.
+  openGraph: {
+    title: "$BRIX BURNS. THE FLOOR RISES.", description: DESCRIPTION, url: "/", siteName: "$BRIX Burns", type: "website",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "$BRIX BURNS. THE FLOOR RISES." }],
+  },
+  twitter: {
+    card: "summary_large_image", site: "@BRIX_burns", title: "$BRIX BURNS. THE FLOOR RISES.", description: DESCRIPTION,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({
