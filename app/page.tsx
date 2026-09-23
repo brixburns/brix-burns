@@ -8,7 +8,9 @@ import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib
 import { useLang } from "./lib/i18n";
 import { Usd } from "./lib/prices";
 import { useVault, type VaultState } from "./lib/useVault";
+import Contracts from "./sections/Contracts";
 import Crack from "./sections/Crack";
+import Faq from "./sections/Faq";
 import How from "./sections/How";
 import Mint from "./sections/Mint";
 import { Cta } from "./sections/shared";
@@ -168,6 +170,7 @@ export default function BrixPage() {
           <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
           {SHOW_TOP_BURNERS && <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>}
           <li><a href="#how">{t.navHow}</a></li>
+          <li><a href="#faq">{t.faqTitle}</a></li>
         </ul>
 
         <div className="nav-right-group">
@@ -230,6 +233,7 @@ export default function BrixPage() {
       <Redeem/>
       {SHOW_TOP_BURNERS && <TopBurners v={v} preview={process.env.NODE_ENV === "development"}/>}
       <How/>
+      <Faq/>
 
       <div className="tagline">
         <Cta/>
@@ -238,6 +242,7 @@ export default function BrixPage() {
       <footer>
         <div className="footer-line">{t.footerLine}</div>
         <div className="footer-brand">$BRIX BURNS</div>
+        <Contracts/>
         <div className="footer-disclaimer">{t.disclaimer}</div>
         <div className="footer-corners">
           <div className="f-corner fl"/>

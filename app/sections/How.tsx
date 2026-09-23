@@ -3,12 +3,13 @@
 import { useLang } from "../lib/i18n";
 
 // Final weights: BRIX VAULT/art/onchain/weights.json (in tenths: 50/22/14/10/0).
+// Names as on social and OpenSea: the same in both languages.
 const TIERS = [
-  { count: 50, weight: "5.0" },
-  { count: 150, weight: "2.2" },
-  { count: 400, weight: "1.4" },
-  { count: 1202, weight: "1.0" },
-  { count: 420, weight: "0" },
+  { name: "WIN BIG", count: 50, weight: "5.0" },
+  { name: "EPIC", count: 150, weight: "2.2" },
+  { name: "RARE", count: 400, weight: "1.4" },
+  { name: "COMMON", count: 1202, weight: "1.0" },
+  { name: "EMPTY", count: 420, weight: "0" },
 ];
 
 export default function How() {
@@ -37,8 +38,9 @@ export default function How() {
         <div className="tier-row">
           {TIERS.map((tier) => (
             <div className={`tier${tier.weight === "0" ? " empty" : ""}`} key={tier.weight}>
+              <div className="tier-n">{tier.name}</div>
               <div className="tier-w">×{tier.weight}</div>
-              <div className="tier-c">{tier.count}{tier.weight === "0" && <> · {t.tierEmpty}</>}</div>
+              <div className="tier-c">{tier.count}</div>
             </div>
           ))}
         </div>

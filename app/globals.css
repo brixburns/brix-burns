@@ -765,6 +765,35 @@ html { scroll-behavior: smooth; }
 .tier-w { font-family: var(--font-orb); color: var(--gold); font-size: 1rem; }
 .tier-c { font-size: .6rem; color: var(--dim); margin-top: 4px; letter-spacing: .08em; }
 .tier.empty .tier-w { color: var(--dim); }
+.tier-n { font-size: .58rem; letter-spacing: .16em; color: var(--white); margin-bottom: 4px; }
+.tier.empty .tier-n { color: var(--dim); }
+
+/* ══ SITE V2 — FAQ (expand / collapse) ══ */
+.faq-list { margin-top: 26px; border-top: 1px solid var(--border); }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  list-style: none; cursor: pointer; padding: 16px 36px 16px 4px; position: relative;
+  font-size: .8rem; letter-spacing: .04em; color: var(--white); line-height: 1.5; transition: color .2s;
+}
+.faq-q::-webkit-details-marker { display: none; }
+.faq-q::after { content: "+"; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: var(--font-orb); font-size: 1rem; color: var(--gold); }
+.faq-item[open] .faq-q { color: var(--gold); }
+.faq-item[open] .faq-q::after { content: "−"; }
+.faq-q:hover { color: var(--gold); }
+.faq-q:focus-visible { outline: 1px solid var(--gold); outline-offset: 2px; }
+.faq-a { padding: 0 36px 18px 4px; font-size: .72rem; line-height: 1.85; color: var(--dim); }
+
+/* ══ SITE V2 — official contracts (footer) ══ */
+.contracts { max-width: 640px; margin: 22px auto 0; text-align: left; border: 1px solid var(--border); padding: 12px 16px; }
+.contracts .mp-label { text-align: center; }
+.contract-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 6px 0; border-top: 1px solid rgba(42,42,0,.6); font-size: .64rem; }
+.cr-label { color: var(--white); letter-spacing: .12em; }
+.cr-chain { color: var(--dim); letter-spacing: .04em; }
+.cr-addr { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.cr-addr a { color: var(--gold); text-decoration: none; word-break: break-all; font-size: .62rem; }
+.cr-addr a:hover { color: var(--white); }
+.cr-addr .copy-btn { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; line-height: 1; border: 1px solid var(--border); padding: 3px 6px; }
+.cr-soon { color: var(--dim); font-style: italic; }
 
 @media (max-width: 640px) {
   .how-grid { grid-template-columns: 1fr; }
