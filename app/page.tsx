@@ -110,7 +110,7 @@ function LangToggle() {
 function MintClock({ v, now }: { v: VaultState; now: number }) {
   const { t } = useLang();
   if (v.mintOpen) return <><span className="mc-label">{t.mintEndsIn}</span> <span className="mc-time">{fmtCountdown(v.mintEnd - now)}</span></>;
-  if (!v.finalized && v.revealAt > now) return <><span className="mc-label">{t.revealIn}</span> <span className="mc-time">~{fmtCountdown(v.revealAt - now)}</span></>;
+  if (!v.finalized && v.revealAt > now) return <><span className="mc-label">{t.revealIn}</span> <span className="mc-time">{fmtCountdown(v.revealAt - now)}</span></>;
   return <span className="mc-label">{v.finalized ? t.revealed : t.mintClosed}</span>;
 }
 
