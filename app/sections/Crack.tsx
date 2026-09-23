@@ -1,0 +1,147 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useReadContracts } from "wagmi";
+import { trixsterAbi, vaultAbi } from "../lib/abi";
+import { MAX_PER_CRACK, NET } from "../lib/chain";
+import { fmtBrix } from "../lib/format";
+import { useLang } from "../lib/i18n";
+import { useTx } from "../lib/useTx";
+import type { VaultState } from "../lib/useVault";
+import { Section, TxStatus, useWallet, WalletGate } from "./shared";
+
+const vault = NET.vault as `0x${string}`;
+const trixster = NET.trixster as `0x${string}`;
+
+function parseIds(s: string, minted: number): number[] {
+  const ids = s.split(/[\s,]+/).map(Number).filter((n) => Number.isInteger(n) && n >= 1 && n <= minted);
+  return [...new Set(ids)];
+}
+
+/** Trixsters the address holds on Robinhood Chain. Not enumerable: ownerOf for every minted id. */
+function useOwned(address: string | undefined, minted: number) {
+  const ids = useMemo(() => Array.from({ length: minted }, (_, i) => i + 1), [minted]);
+  const { data, isLoading } = useReadContracts({
+    contracts: ids.map((id) => ({
+      address: trixster, abi: trixsterAbi, functionName: "ownerOf", args: [BigInt(id)], chainId: NET.rhChain.id,
+    } as const)),
+    query: { enabled: !!address && minted > 0 && !!NET.trixster, refetchInterval: 60_000 },
+  });
+  const owned = data
+    ? ids.filter((_, i) => data[i].status === "success" && (data[i].result as string).toLowerCase() === address!.toLowerCase())
+    : [];
+  return { owned, loading: isLoading };
+}
+
+/** Confirmed cracks the relayer has yet to pay (worker GET /status). */
+function usePendingPayouts(): number | undefined {
+  const { data } = useQuery({
+    queryKey: ["relayer-status"],
+    queryFn: async () => {
+      const res = await fetch(NET.relayerStatus);
+      const body = (await res.json()) as { pendingPayouts?: string[] };
+      return body.pendingPayouts?.length ?? 0;
+    },
+    enabled: !!NET.relayerStatus,
+    refetchInterval: 60_000,
+  });
+  return data;
+}
+
+export default function Crack({ v }: { v?: VaultState }) {
+  const { t } = useLang();
+  const w = useWallet();
+  const tx = useTx();
+  const minted = v?.minted ?? 0;
+  const { owned, loading } = useOwned(w.address, minted);
+  const [picked, setPicked] = useState<Set<number>>(new Set());
+  const [manual, setManual] = useState("");
+  const [sent, setSent] = useState<Set<number>>(new Set());
+  const pending = usePendingPayouts();
+
+  const { data: dowries } = useReadContracts({
+    contracts: owned.map((id) => ({
+      address: vault, abi: vaultAbi, functionName: "dowryOf", args: [BigInt(id)], chainId: NET.chain.id,
+    } as const)),
+    allowFailure: false,
+    query: { enabled: !!v?.finalized && owned.length > 0 },
+  });
+  const dowryOf = (id: number) => {
+    const i = owned.indexOf(id);
+    return dowries && i >= 0 ? (dowries[i] as bigint) : undefined;
+  };
+
+  const ids = [...new Set([...picked, ...parseIds(manual, minted)])].filter((id) => !sent.has(id));
+  const tooMany = ids.length > MAX_PER_CRACK;
+  const busy = tx.state.status === "signing" || tx.state.status === "pending";
+
+  const toggle = (id: number) => setPicked((p) => {
+    const next = new Set(p);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+
+  const crack = async () => {
+    const batch = ids;
+    if (await tx.send({ address: vault, abi: vaultAbi, functionName: "crack", args: [batch.map(BigInt)] })) {
+      setSent((s) => new Set([...s, ...batch]));
+      setPicked(new Set());
+      setManual("");
+    }
+  };
+
+  return (
+    <Section id="crack" title={t.crackTitle} lead={t.crackLead}>
+      <div className="mint-card">
+        {v && !v.finalized && <div className="mint-warn">{t.crackBlind}</div>}
+
+        {w.address && (
+          <div className="qty">
+            <div className="mp-label">{t.crackYours}</div>
+            {loading ? <div className="qty-note">{t.crackScanning}</div>
+              : owned.length === 0 ? <div className="qty-note">{t.crackNone}</div>
+              : (
+                <div className="trix-grid">
+                  {owned.map((id) => {
+                    const d = dowryOf(id);
+                    const isSent = sent.has(id);
+                    return (
+                      <button
+                        key={id} disabled={isSent}
+                        className={`trix-chip${picked.has(id) ? " on" : ""}${isSent ? " sent" : ""}`}
+                        onClick={() => toggle(id)}
+                      >
+                        <span className="tc-id">#{id}</span>
+                        {isSent ? <span className="tc-dowry">{t.crackSent}</span>
+                          : d !== undefined && <span className="tc-dowry">{d === 0n ? "0" : fmtBrix(d)}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+          </div>
+        )}
+
+        <div className="qty">
+          <input
+            className="addr-input" placeholder="7,12,31" aria-label={t.crackManual}
+            value={manual} onChange={(e) => setManual(e.target.value.replace(/[^\d,\s]/g, ""))}
+          />
+          <div className="qty-note">{t.crackManual}</div>
+        </div>
+
+        <div className="mint-action">
+          <WalletGate>
+            {ids.length === 0 ? <button className="act-btn" disabled>{t.crackPick}</button>
+              : tooMany ? <button className="act-btn" disabled>{t.crackTooMany}</button>
+              : <button className="act-btn act-burn" disabled={busy} onClick={crack}>{t.crackButton(ids.length)}</button>}
+          </WalletGate>
+          <TxStatus state={tx.state} done={t.crackDone}/>
+          <div className="qty-note">{t.crackEoa}</div>
+          {!!pending && <div className="qty-note pending-note">{t.pendingDowries(pending)}</div>}
+        </div>
+      </div>
+    </Section>
+  );
+}
