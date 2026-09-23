@@ -24,7 +24,36 @@
 
 body { background: var(--bg); color: var(--white); font-family: var(--font-mono); overflow-x: hidden; }
 body::before { content: ''; position: fixed; inset: 0; z-index: 9999; background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px); pointer-events: none; }
-body::after { content: ''; position: fixed; inset: 0; z-index: 9998; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; opacity:.4; }
+/* Old-TV static: one noise tile, oversized so it can jump around without
+   showing its edges; stepped jumps read as snow. Transform only: cheap. */
+body::after {
+  content: ''; position: fixed; inset: -200px; z-index: 9998; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px; opacity: .055;
+  animation: tv-static .9s steps(1) infinite;
+}
+@keyframes tv-static {
+  0%   { transform: translate(0, 0); }
+  11%  { transform: translate(-43px, 71px); }
+  22%  { transform: translate(88px, -24px); }
+  33%  { transform: translate(-117px, -93px); }
+  44%  { transform: translate(31px, 129px); }
+  55%  { transform: translate(152px, 47px); }
+  66%  { transform: translate(-76px, 18px); }
+  77%  { transform: translate(64px, -141px); }
+  88%  { transform: translate(-158px, 102px); }
+}
+/* a faint band rolling down the screen, like a drifting picture */
+html::before {
+  content: ''; position: fixed; left: 0; right: 0; top: 0; height: 22vh; z-index: 9997; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(232,232,224,.028) 45%, rgba(232,232,224,.04) 50%, rgba(232,232,224,.028) 55%, transparent);
+  transform: translateY(-25vh); animation: tv-roll 11s linear infinite;
+}
+@keyframes tv-roll { to { transform: translateY(105vh); } }
+@media (prefers-reduced-motion: reduce) {
+  body::after, html::before { animation: none; }
+  html::before { display: none; }
+}
 
 /* ══ NAV ══ */
 nav {
@@ -56,6 +85,8 @@ nav {
 .nav-links .nav-burners:hover { color: var(--white); }
 .nav-links .nav-redeem { color: var(--bnb); font-weight: bold; }
 .nav-links .nav-redeem:hover { color: var(--white); }
+.nav-links .nav-faq { color: var(--gold); font-weight: bold; }
+.nav-links .nav-faq:hover { color: var(--white); }
 .nav-links .nav-docs, .nav-dropdown a.dropdown-docs { color: var(--white); }
 
 .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; position: relative; }
@@ -775,11 +806,14 @@ html { scroll-behavior: smooth; }
 .cr-chain { color: var(--dim); letter-spacing: .04em; }
 
 /* ══ SITE V2 — burn with BNB, a box inside the redeem panel ══ */
-.bwb { border: 1px dashed rgba(255,75,31,.45); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
-.bwb-title { font-family: var(--font-orb); font-weight: 700; font-size: .78rem; letter-spacing: .12em; color: var(--orange); }
-.bwb-row { display: flex; gap: 16px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
-.bwb-field { flex: 1 1 180px; max-width: 260px; }
-.bwb .act-btn { max-width: 320px; font-size: .75rem; padding: 11px 14px; }
+.bwb { border: 1px dashed rgba(255,75,31,.45); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; text-align: center; max-width: 520px; width: 100%; margin: 0 auto; }
+.bwb-title { font-family: var(--font-orb); font-weight: 700; font-size: .68rem; letter-spacing: .12em; color: var(--orange); }
+.bwb .qty-note { margin-top: 2px; font-size: .58rem; }
+.bwb-row { display: flex; gap: 12px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.bwb-field { flex: 1 1 150px; max-width: 220px; }
+.bwb .amount-input { font-size: .95rem; padding: 7px 10px; }
+.bwb .mt-value { font-size: .95rem; }
+.bwb .act-btn { max-width: 260px; font-size: .68rem; padding: 9px 12px; }
 .cr-addr { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .cr-addr a { color: var(--gold); text-decoration: none; word-break: break-all; font-size: .62rem; }
 .cr-addr a:hover { color: var(--white); }

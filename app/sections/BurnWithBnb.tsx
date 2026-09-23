@@ -12,8 +12,9 @@ import { TxStatus, useWallet, WalletGate } from "./shared";
 
 const vault = NET.vault as `0x${string}`;
 
-// The estimate uses the quoted price minus the 3% tax; the vault must get at
-// least 90% of it, or the transaction reverts instead of buying at a bad price.
+// The vault's buy pays the 3% tax like any other: the estimate is the quoted
+// price minus it. The vault must get at least 90% of that, or the transaction
+// reverts instead of buying at a bad price.
 const TAX = 0.97;
 const MIN_SHARE = 0.9;
 

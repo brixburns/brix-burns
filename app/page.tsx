@@ -170,7 +170,7 @@ export default function BrixPage() {
           <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
           {SHOW_TOP_BURNERS && <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>}
           <li><a href="#how">{t.navHow}</a></li>
-          <li><a href="#faq">{t.faqTitle}</a></li>
+          <li><a href="#faq" className="nav-faq">{t.faqTitle}</a></li>
         </ul>
 
         <div className="nav-right-group">
