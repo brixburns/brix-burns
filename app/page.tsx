@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, SHOW_TOP_BURNERS } from "./lib/chain";
+import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH, SHOW_TOP_BURNERS } from "./lib/chain";
 import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib/format";
 import { useLang } from "./lib/i18n";
 import { Usd } from "./lib/prices";
@@ -165,9 +165,11 @@ export default function BrixPage() {
         {IS_TESTNET && <span className="net-badge">{t.testnet}</span>}
 
         <ul className="nav-links">
-          <li><a href="#mint" className="nav-mint">{t.navMint}</a></li>
-          <li><a href="#crack" className="nav-burners">{t.navCrack}</a></li>
-          <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
+          {!PRELAUNCH && <>
+            <li><a href="#mint" className="nav-mint">{t.navMint}</a></li>
+            <li><a href="#crack" className="nav-burners">{t.navCrack}</a></li>
+            <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
+          </>}
           {SHOW_TOP_BURNERS && <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>}
           <li><a href="#how">{t.navHow}</a></li>
           <li><a href="#faq" className="nav-faq">{t.faqTitle}</a></li>
@@ -175,11 +177,11 @@ export default function BrixPage() {
 
         <div className="nav-right-group">
           <LangToggle/>
-          <WalletButton/>
+          {!PRELAUNCH && <WalletButton/>}
         </div>
       </nav>
 
-      <StatsBar stats={stats}/>
+      {!PRELAUNCH && <StatsBar stats={stats}/>}
 
       {/* == HERO =========================================================== */}
       <section className="hero" id="sec-mission">
@@ -202,7 +204,24 @@ export default function BrixPage() {
         <p className="hero-sub">{t.heroSub}</p>
       </section>
 
-      {/* == FLOOR ========================================================== */}
+      {/* == BEFORE LAUNCH: what's coming, no on-chain numbers yet ========= */}
+      {PRELAUNCH ? (
+      <div className="burn-section">
+        <div className="soon-box">
+          <div className="soon-title">{t.soonTitle}</div>
+          <p className="soon-body">{t.soonBody}</p>
+          <div className="soon-facts">
+            {t.soonFacts.map((f) => (
+              <div className="soon-fact" key={f.v}>
+                <div className="sf-v">{f.v}</div>
+                <div className="sf-l">{f.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      ) : (
+      /* == FLOOR ========================================================== */
       <div className="burn-section">
         <div className="floor-label">{t.floorLabel}</div>
         <div className="burn-box floor-mode">
@@ -225,12 +244,15 @@ export default function BrixPage() {
           <div className="mint-clock">{v && <MintClock v={v} now={now}/>}</div>
         </div>
       </div>
+      )}
 
       <div className="tagline tagline-top"><Cta/></div>
 
-      <Mint v={v}/>
-      <Crack v={v}/>
-      <Redeem/>
+      {!PRELAUNCH && <>
+        <Mint v={v}/>
+        <Crack v={v}/>
+        <Redeem/>
+      </>}
       {SHOW_TOP_BURNERS && <TopBurners v={v} preview={process.env.NODE_ENV === "development"}/>}
       <How/>
       <Faq/>

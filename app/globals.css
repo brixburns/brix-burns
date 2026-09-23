@@ -88,6 +88,16 @@ nav {
 .nav-links .nav-redeem:hover { color: var(--white); }
 .nav-links .nav-faq { color: var(--gold); font-weight: bold; }
 .nav-links .nav-faq:hover { color: var(--white); }
+
+/* ══ SITE V2 — before launch: in place of the live floor ══ */
+.soon-box { width: min(720px, 100%); border: 1px solid var(--gold); box-shadow: 0 0 18px rgba(204,255,0,.12); padding: 26px 22px; text-align: center; }
+.soon-title { font-family: var(--font-orb); font-weight: 900; font-size: clamp(1.5rem, 5vw, 2.3rem); color: var(--gold); letter-spacing: .08em; text-shadow: 0 0 18px rgba(204,255,0,.35); }
+.soon-body { max-width: 540px; margin: 12px auto 0; font-size: .74rem; line-height: 1.8; color: var(--dim); }
+.soon-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 22px; }
+.soon-fact { border: 1px solid var(--border); background: var(--surface); padding: 14px 10px; }
+.sf-v { font-family: var(--font-orb); font-weight: 900; font-size: 1.4rem; color: var(--white); }
+.sf-l { margin-top: 6px; font-size: .55rem; letter-spacing: .12em; color: var(--dim); line-height: 1.6; }
+@media (max-width: 540px) { .soon-facts { grid-template-columns: 1fr; } }
 .nav-links .nav-docs, .nav-dropdown a.dropdown-docs { color: var(--white); }
 
 .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; position: relative; }

@@ -32,6 +32,15 @@ const en = {
   footerLine: "// THE FLOOR RISES.",
   disclaimer: "Nothing on this site constitutes financial advice. The floor is backing, not a guaranteed price. Crypto and NFT markets involve risk. Burns are permanent.",
 
+  // before launch
+  soonTitle: "LAUNCHING SOON",
+  soonBody: "$BRIX launches on Flap, on BNB Chain. The contracts and every official link go live on this page at launch: follow @BRIX_burns to know when.",
+  soonFacts: [
+    { v: "3%", l: "TAX ON EVERY TRADE, MOSTLY INTO THE BNB RESERVE" },
+    { v: "2,222", l: "TRIXSTERS, A 7-DAY MINT" },
+    { v: "50%", l: "OF EVERY MINT'S $BRIX BURNED" },
+  ],
+
   // nav
   navMint: "MINT",
   navCrack: "CRACK",
@@ -197,6 +206,14 @@ const zh: Dict = {
   openseaCollection: "在 OPENSEA 浏览整个系列 ›",
   footerLine: "// 地板价上升。",
   disclaimer: "本网站内容不构成任何投资建议。地板价是储备支撑，并非保证价格。加密货币与 NFT 市场存在风险。销毁不可撤销。",
+
+  soonTitle: "即将上线",
+  soonBody: "$BRIX 将在 BNB Chain 上的 Flap 上线。合约地址和所有官方链接将在上线时公布于本页：关注 @BRIX_burns 获取最新消息。",
+  soonFacts: [
+    { v: "3%", l: "每笔交易的税，大部分注入 BNB 储备金" },
+    { v: "2,222", l: "个 TRIXSTER，铸造开放 7 天" },
+    { v: "50%", l: "每次铸造的 $BRIX 被销毁" },
+  ],
 
   navMint: "铸造",
   navCrack: "打碎",

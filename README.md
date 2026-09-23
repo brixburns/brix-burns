@@ -1,22 +1,22 @@
 # $BRIX
 
-A Solana token engineered to burn itself out of existence. The goal is zero supply.
+Backed by BNB. Brix by brix.
 
-This repository contains the source code of [brix-burns.com](https://brix-burns.com) — the official site for the $BRIX token and TRIXSTER NFT collection.
+This repository contains the source code of [brix-burns.com](https://brix-burns.com), the official site for the $BRIX token and the Trixster collection.
 
 ## What is this
 
-- **$BRIX** — Solana SPL token with a deflationary mechanic. Every NFT mint, every secondary sale, and every trading fee feeds the burn.
-- **TRIXSTER** — Collection of 3,333 NFTs whose minting destroys $BRIX. The NFTs are the mechanism; the burn is the mission.
-- Target: 90% of supply destroyed.
+- **$BRIX** is a token on BNB Chain, launched on Flap. About 87% of the 3% tax on every trade fills a BNB reserve that nobody can withdraw. Anyone can burn $BRIX and take their share of it (redeem): the floor per $BRIX only rises.
+- **Trixster** is a collection of 2,222 NFTs on Robinhood Chain, minted with $BRIX: half of it burns, half fills a dowry pot. Crack a Trixster to take its dowry; it burns for good.
 
-Full documentation: [`/docs.html`](https://brix-burns.com/docs.html)
+Official contract addresses are published on the site at launch, and only there.
 
 ## Stack
 
 - [Next.js 16](https://nextjs.org) (App Router, static export → GitHub Pages)
-- [Solana web3.js](https://github.com/solana-labs/solana-web3.js) + [Metaplex Core Candy Machine](https://developers.metaplex.com/core-candy-machine)
-- [Wallet Adapter](https://github.com/anza-xyz/wallet-adapter) (Phantom and others, autodetected via Wallet Standard)
+- [viem](https://viem.sh) + [wagmi](https://wagmi.sh), browser wallets
+- Network and addresses in `app/lib/chain.ts`: testnet by default, mainnet with `NEXT_PUBLIC_NETWORK=mainnet` (set by the deploy workflow). Until the mainnet addresses are filled in, the site shows its pre-launch version.
+- Texts in English and Chinese in `app/lib/i18n.tsx`.
 
 ## Local development
 
@@ -42,4 +42,4 @@ Outputs a fully static site to `out/` ready for deployment.
 
 ---
 
-**Disclaimer**: This codebase is provided as-is. Nothing in this repository constitutes financial advice. Cryptocurrency and NFT markets involve risk. Burns are permanent. Mint payments are final.
+**Disclaimer**: This codebase is provided as-is. Nothing in this repository constitutes financial advice. The floor is backing, not a guaranteed price. Cryptocurrency and NFT markets involve risk. Burns are permanent.

@@ -41,6 +41,11 @@ const NETWORKS = {
 export const NET = NETWORKS[NETWORK];
 export const IS_TESTNET = NETWORK === "testnet";
 
+// Before launch the mainnet vault doesn't exist: the site shows what $BRIX is,
+// the FAQ and the socials, and hides everything that reads or writes on-chain.
+// Filling the mainnet addresses above switches it on, nothing else to do.
+export const PRELAUNCH = !NET.vault;
+
 // Flap tokens launch with a fixed 1B supply: burned = this − effectiveSupply().
 export const INITIAL_SUPPLY = 1_000_000_000n * 10n ** 18n;
 export const MAX_TRIXSTERS = 2222;
