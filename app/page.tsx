@@ -165,7 +165,7 @@ export default function BrixPage() {
         <ul className="nav-links">
           <li><a href="#mint" className="nav-mint">{t.navMint}</a></li>
           <li><a href="#crack" className="nav-burners">{t.navCrack}</a></li>
-          <li><a href="#redeem">{t.navRedeem}</a></li>
+          <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
           {SHOW_TOP_BURNERS && <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>}
           <li><a href="#how">{t.navHow}</a></li>
         </ul>

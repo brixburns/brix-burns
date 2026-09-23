@@ -54,6 +54,8 @@ nav {
 .nav-links .nav-mint:hover { color: var(--white); }
 .nav-links .nav-burners { color: var(--orange); font-weight: bold; }
 .nav-links .nav-burners:hover { color: var(--white); }
+.nav-links .nav-redeem { color: var(--bnb); font-weight: bold; }
+.nav-links .nav-redeem:hover { color: var(--white); }
 .nav-links .nav-docs, .nav-dropdown a.dropdown-docs { color: var(--white); }
 
 .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; position: relative; }
