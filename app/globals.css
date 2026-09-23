@@ -887,6 +887,8 @@ html { scroll-behavior: smooth; }
 /* Flap: outline and text in lime, like the other CTAs; its logo is lime too */
 .btn-flap { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(204,255,0,.2); }
 .btn-flap:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px rgba(204,255,0,.45); }
+/* Not live yet: full strength like OpenSea, the row stays even; the title says why it doesn't click */
+.btn-flap.btn-disabled, .btn-flap.btn-disabled:hover { opacity: 1; box-shadow: 0 0 10px rgba(204,255,0,.2); }
 
 /* ══ SITE V2 — hero like the social image; brand logos in buttons ══ */
 .h-bnb { color: var(--bnb); }
