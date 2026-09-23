@@ -37,17 +37,24 @@ function useOwned(address: string | undefined, minted: number) {
 /** The holder's OpenSea profile: it lists their Trixsters among everything else they own. */
 const openseaProfile = (address: string) => `https://opensea.io/${address}`;
 
-/** Confirmed cracks the relayer has yet to pay (worker GET /status). */
-function usePendingPayouts(): number | undefined {
+/**
+ * Confirmed cracks the relayer has yet to pay (worker GET /status). The
+ * workers' free plan is 100,000 requests a day: ask only with a wallet
+ * connected, and after an error stop asking instead of retrying.
+ */
+function usePendingPayouts(connected: boolean): number | undefined {
   const { data } = useQuery({
     queryKey: ["relayer-status"],
     queryFn: async () => {
       const res = await fetch(NET.relayerStatus);
+      if (!res.ok) throw new Error(`status ${res.status}`);
       const body = (await res.json()) as { pendingPayouts?: string[] };
       return body.pendingPayouts?.length ?? 0;
     },
-    enabled: !!NET.relayerStatus,
-    refetchInterval: 60_000,
+    enabled: connected && !!NET.relayerStatus,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: (query) => (query.state.status === "error" ? false : 60_000),
   });
   return data;
 }
@@ -61,7 +68,7 @@ export default function Crack({ v }: { v?: VaultState }) {
   const [picked, setPicked] = useState<Set<number>>(new Set());
   const [manual, setManual] = useState("");
   const [sent, setSent] = useState<Set<number>>(new Set());
-  const pending = usePendingPayouts();
+  const pending = usePendingPayouts(!!w.address);
 
   const { data: dowries } = useReadContracts({
     contracts: owned.map((id) => ({

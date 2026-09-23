@@ -13,16 +13,24 @@ const FETCHED = 500; // the worker's maximum: enough to find the connected walle
 
 type Row = { rank: number; address: string; burned: bigint };
 
+/**
+ * The worker recounts every 5 minutes, so asking more often is wasted: its
+ * free plan is 100,000 requests a day across all visitors. After an error,
+ * stop asking instead of retrying.
+ */
 function useTop() {
   return useQuery({
     queryKey: ["burners-top"],
     queryFn: async (): Promise<Row[]> => {
       const res = await fetch(`${NET.burnersTop}?limit=${FETCHED}`);
+      if (!res.ok) throw new Error(`top ${res.status}`);
       const body = (await res.json()) as { top: { rank: number; address: string; burned: string }[] };
       return body.top.map((r) => ({ rank: r.rank, address: r.address.toLowerCase(), burned: BigInt(r.burned) }));
     },
     enabled: !!NET.burnersTop,
-    refetchInterval: 60_000,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchInterval: (query) => (query.state.status === "error" ? false : 5 * 60_000),
   });
 }
 
