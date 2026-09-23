@@ -821,6 +821,4 @@ html { scroll-behavior: smooth; }
 .h-logo { display: inline-block; width: auto; height: .62em; margin-right: .16em; vertical-align: -.02em; }
 
 .btn-brand { display: inline-flex; align-items: center; gap: 8px; }
-.brand-chip { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--bg); border-radius: 4px; }
-.brand-icon { border-radius: 50%; }
 .btn-opensea { font-family: inherit; }

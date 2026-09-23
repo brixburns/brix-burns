@@ -78,15 +78,14 @@ export function Cta() {
   const { t } = useLang();
   return (
     <div className="tl-cta">
+      {/* Flap's wordmark in dark: the original is lime, like this button */}
       <LinkBtn href={NET.flap} className="btn-primary btn-brand">
         {t.getBrixBtn}
-        <span className="brand-chip"><Image src="/flap.svg" alt="" width={16} height={16}/></span>
-        FLAP
+        <Image src="/flap-logo-dark.svg" alt="Flap" width={93} height={16}/>
       </LinkBtn>
       <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand">
         {t.openseaBtn}
-        <Image src="/opensea.png" alt="" width={18} height={18} className="brand-icon"/>
-        OpenSea
+        <Image src="/opensea-logo.svg" alt="OpenSea" width={77} height={20}/>
       </LinkBtn>
       <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
         {t.follow} &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{ verticalAlign: "middle", opacity: .85 }}/>
