@@ -86,15 +86,16 @@ export function Cta() {
         <Image src="/flap-logo.svg" alt="" width={93} height={16} className="cta-full"/>
         <Image src="/flap-mark.svg" alt="" width={24} height={20} className="cta-mark"/>
       </LinkBtn>
+      {/* X in the middle: the two platform buttons frame it */}
+      <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-brand" aria-label={`${t.followOn} X`}>
+        <span className="cta-words">{t.followOn}</span>
+        <Image src="/logox.svg" alt="" width={18} height={18}/>
+      </a>
       <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand" label={`${t.openseaBtn} OpenSea`}>
         <span className="cta-words">{t.openseaBtn}</span>
         <Image src="/opensea-logo.svg" alt="" width={77} height={20} className="cta-full"/>
         <Image src="/opensea-mark.svg" alt="" width={24} height={24} className="cta-mark"/>
       </LinkBtn>
-      <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-brand" aria-label={`${t.follow} X`}>
-        <span className="cta-words">{t.follow}</span>
-        <Image src="/logox.svg" alt="" width={14} height={14} style={{ opacity: .85 }}/>
-      </a>
     </div>
   );
 }
