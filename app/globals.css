@@ -815,3 +815,12 @@ html { scroll-behavior: smooth; }
 .btn-opensea { border-color: var(--opensea); }
 .btn-opensea:hover { border-color: var(--opensea); color: var(--opensea); box-shadow: 0 0 16px rgba(32,129,226,.35); }
 .link-opensea { color: var(--opensea); }
+
+/* ══ SITE V2 — hero like the social image; brand logos in buttons ══ */
+.h-bnb { color: var(--bnb); }
+.h-logo { display: inline-block; width: auto; height: .62em; margin-right: .16em; vertical-align: -.02em; }
+
+.btn-brand { display: inline-flex; align-items: center; gap: 8px; }
+.brand-chip { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: var(--bg); border-radius: 4px; }
+.brand-icon { border-radius: 50%; }
+.btn-opensea { font-family: inherit; }

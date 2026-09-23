@@ -183,9 +183,12 @@ export default function BrixPage() {
         <div className="corner tl"/><div className="corner tr"/>
         <div className="corner bl"/><div className="corner br"/>
 
-        <div className="hero-eyebrow">{t.eyebrow}</div>
+        <div className="hero-eyebrow">
+          {t.eyebrow.split("BNB").flatMap((part, i) => i ? [<span className="h-bnb" key={i}>BNB</span>, part] : [part])}
+        </div>
 
         <h1 className="hero-title">
+          <Image src="/favicon.svg" alt="" width={120} height={120} className="h-logo" priority/>
           <span className="h-dollar">$</span><span className="h-brix">BRIX</span>{" "}
           <span className="h-burns">BURNS</span><span className="h-dot">.</span>
         </h1>

@@ -65,17 +65,29 @@ export function TxStatus({ state, done }: { state: TxState; done: string }) {
 
 const X_LINK = "https://x.com/BRIX_burns";
 
-/** GET $BRIX (Flap), OpenSea, X. A link without a destination yet shows disabled. */
+/** A button that is a link once its destination exists, disabled until then. */
+function LinkBtn({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+  const { t } = useLang();
+  return href
+    ? <a href={href} target="_blank" rel="noopener noreferrer" className={`btn ${className}`}>{children}</a>
+    : <span className={`btn ${className} btn-disabled`} title={t.notLive} aria-disabled="true">{children}</span>;
+}
+
+/** GET $BRIX (Flap), OpenSea, X, with the platforms' own logos. */
 export function Cta() {
   const { t } = useLang();
   return (
     <div className="tl-cta">
-      {NET.flap
-        ? <a href={NET.flap} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{t.getBrixBtn} &nbsp;›</a>
-        : <span className="btn btn-primary btn-disabled" title={t.notLive} aria-disabled="true">{t.getBrixBtn} &nbsp;›</span>}
-      {NET.opensea
-        ? <a href={NET.opensea} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-opensea">{t.openseaBtn}</a>
-        : <span className="btn btn-outline btn-opensea btn-disabled" title={t.notLive} aria-disabled="true">{t.openseaBtn}</span>}
+      <LinkBtn href={NET.flap} className="btn-primary btn-brand">
+        {t.getBrixBtn}
+        <span className="brand-chip"><Image src="/flap.svg" alt="" width={16} height={16}/></span>
+        FLAP
+      </LinkBtn>
+      <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand">
+        {t.openseaBtn}
+        <Image src="/opensea.png" alt="" width={18} height={18} className="brand-icon"/>
+        OpenSea
+      </LinkBtn>
       <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
         {t.follow} &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{ verticalAlign: "middle", opacity: .85 }}/>
       </a>
