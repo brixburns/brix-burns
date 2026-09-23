@@ -31,6 +31,12 @@ export const erc20Abi = parseAbi([
   "function approve(address spender, uint256 amount) returns (bool)",
 ]);
 
+// Flap Portal: price on the bonding curve, in BNB (18 decimals).
+// status: 1 = trading on the curve, 4 = graduated to the DEX.
+export const portalAbi = parseAbi([
+  "function getTokenV2(address token) view returns (uint8 status, uint256 reserve, uint256 circulatingSupply, uint256 price, uint8 tokenVersion, uint256 r, uint256 dexSupplyThresh)",
+]);
+
 // Trixster on Robinhood Chain: not enumerable, so ownership is read id by id.
 export const trixsterAbi = parseAbi([
   "function ownerOf(uint256 tokenId) view returns (address)",

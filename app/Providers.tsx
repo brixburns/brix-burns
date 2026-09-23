@@ -6,6 +6,7 @@ import { createConfig, http, type Transport, WagmiProvider } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { NET } from "./lib/chain";
 import { LangProvider } from "./lib/i18n";
+import { PricesProvider } from "./lib/prices";
 
 // Injected wallets only (MetaMask, Rabby, Trust, Binance Wallet…): cracking
 // needs a plain EOA anyway, see BRIX_design_v1.md §7.
@@ -25,7 +26,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <LangProvider>{children}</LangProvider>
+        <LangProvider><PricesProvider>{children}</PricesProvider></LangProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

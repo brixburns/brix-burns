@@ -7,6 +7,7 @@ import { erc20Abi, vaultAbi } from "../lib/abi";
 import { NET } from "../lib/chain";
 import { fmtBnb, fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
+import { Usd } from "../lib/prices";
 import { useTx } from "../lib/useTx";
 import { Section, TxStatus, useWallet, WalletGate } from "./shared";
 
@@ -60,7 +61,11 @@ export default function Redeem() {
 
         <div className="mint-total">
           <div className="mp-label">{t.redeemGet}</div>
-          <div className="mt-value bnb">{preview !== undefined && amount > 0n ? fmtBnb(preview, 6) : "0"} <span className="bnb">BNB</span></div>
+          <div className="mt-value bnb">
+            {preview !== undefined && amount > 0n
+              ? <Usd bnb={preview}>{fmtBnb(preview, 6)} <span className="bnb">BNB</span></Usd>
+              : <>0 <span className="bnb">BNB</span></>}
+          </div>
           <div className="qty-note">{t.redeemNote}</div>
         </div>
 

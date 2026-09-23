@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useAccount, useBalance, useConnect, useReadContracts, useSwitchChain } from "wagmi";
 import { erc20Abi } from "../lib/abi";
 import { NET } from "../lib/chain";
@@ -58,6 +59,26 @@ export function TxStatus({ state, done }: { state: TxState; done: string }) {
       {"hash" in state && (
         <a href={explorerTx(state.hash)} target="_blank" rel="noopener noreferrer">{t.txView} ›</a>
       )}
+    </div>
+  );
+}
+
+const X_LINK = "https://x.com/BRIX_burns";
+
+/** GET $BRIX (Flap), OpenSea, X. A link without a destination yet shows disabled. */
+export function Cta() {
+  const { t } = useLang();
+  return (
+    <div className="tl-cta">
+      {NET.flap
+        ? <a href={NET.flap} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{t.getBrixBtn} &nbsp;›</a>
+        : <span className="btn btn-primary btn-disabled" title={t.notLive} aria-disabled="true">{t.getBrixBtn} &nbsp;›</span>}
+      {NET.opensea
+        ? <a href={NET.opensea} target="_blank" rel="noopener noreferrer" className="btn btn-outline">{t.openseaBtn}</a>
+        : <span className="btn btn-outline btn-disabled" title={t.notLive} aria-disabled="true">{t.openseaBtn}</span>}
+      <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+        {t.follow} &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{ verticalAlign: "middle", opacity: .85 }}/>
+      </a>
     </div>
   );
 }

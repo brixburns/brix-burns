@@ -218,7 +218,7 @@ nav {
 .btn-danger { background: var(--orange); color: #000; box-shadow: 0 0 0 1px var(--orange); }
 .btn-danger:hover { box-shadow: 0 0 20px var(--orange); }
 /* Pre-launch placeholder: looks like the primary CTA but does nothing */
-.btn-disabled { cursor: default; }
+.btn-disabled { cursor: default; opacity: .45; }
 .btn-disabled:hover { transform: none; box-shadow: 0 0 0 1px var(--gold); }
 
 /* ══ PILLARS ══ */
@@ -699,6 +699,8 @@ html { scroll-behavior: smooth; }
 .mp-value { font-family: var(--font-orb); font-size: clamp(1.05rem, 4vw, 1.4rem); color: var(--white); }
 .mp-value span, .mt-value span { color: var(--gold); font-size: .75em; }
 .mp-value span.bnb, .mt-value span.bnb, .mt-value.bnb { color: var(--bnb); }
+/* the USD tooltip wrapper is a span too: it keeps the amount's own look */
+.mp-value .usd, .mt-value .usd { color: inherit; font-size: inherit; }
 .mp-split { margin-top: 8px; font-size: .66rem; color: var(--dim); line-height: 1.7; }
 
 .qty { text-align: center; }
@@ -792,3 +794,18 @@ html { scroll-behavior: smooth; }
   .tb .tb-share { display: none; }
   .tb-wrap { padding: 4px 8px 8px; }
 }
+
+/* ══ SITE V2 — USD tooltip, steps note, top CTA ══ */
+.usd { position: relative; cursor: help; border-bottom: 1px dotted rgba(136,136,112,.6); outline: none; }
+.usd::after {
+  content: attr(data-usd); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translate(-50%, 4px);
+  background: var(--bg); border: 1px solid var(--gold); color: var(--white);
+  font-family: var(--font-mono); font-size: .68rem; font-weight: normal; letter-spacing: .06em; white-space: nowrap;
+  padding: 4px 8px; pointer-events: none; opacity: 0; transition: opacity .15s, transform .15s; z-index: 50;
+  text-shadow: none; box-shadow: 0 0 12px rgba(204,255,0,.15);
+}
+.usd:hover::after, .usd:focus::after { opacity: 1; transform: translate(-50%, 0); }
+
+.steps-note { font-size: .7rem; color: var(--gold); letter-spacing: .08em; border: 1px solid rgba(204,255,0,.35); background: rgba(204,255,0,.06); padding: 7px 14px; text-align: center; }
+
+.tagline-top { padding: 34px 24px 0; }

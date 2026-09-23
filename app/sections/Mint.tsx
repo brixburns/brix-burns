@@ -6,6 +6,7 @@ import { erc20Abi, vaultAbi } from "../lib/abi";
 import { MAX_PER_WALLET, MAX_TRIXSTERS, MINT_BRIX, MINT_FEE, NET } from "../lib/chain";
 import { fmtBnb, fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
+import { Usd } from "../lib/prices";
 import { useTx } from "../lib/useTx";
 import type { VaultState } from "../lib/useVault";
 import { Section, TxStatus, useWallet, WalletGate } from "./shared";
@@ -54,7 +55,9 @@ export default function Mint({ v }: { v?: VaultState }) {
         {/* price */}
         <div className="mint-price">
           <div className="mp-label">{t.mintPrice}</div>
-          <div className="mp-value">69,000 <span>$BRIX</span> + 0.0069 <span className="bnb">BNB</span></div>
+          <div className="mp-value">
+            <Usd brix={MINT_BRIX}>69,000 <span>$BRIX</span></Usd> + <Usd bnb={MINT_FEE}>0.0069 <span className="bnb">BNB</span></Usd>
+          </div>
           <div className="mp-split">{t.mintSplit}</div>
         </div>
 
@@ -75,12 +78,12 @@ export default function Mint({ v }: { v?: VaultState }) {
         {/* total */}
         <div className="mint-total">
           <div className="mp-label">{t.mintTotal}</div>
-          <div className="mt-value">{fmtBrix(needBrix)} <span>$BRIX</span></div>
-          <div className="mt-value">+ {fmtBnb(needBnb)} <span className="bnb">BNB</span></div>
+          <div className="mt-value"><Usd brix={needBrix}>{fmtBrix(needBrix)} <span>$BRIX</span></Usd></div>
+          <div className="mt-value">+ <Usd bnb={needBnb}>{fmtBnb(needBnb)} <span className="bnb">BNB</span></Usd></div>
           {w.address && (
             <div className="mt-balance">
-              {t.balance}: <b className={lowBrix ? "low" : ""}>{w.brix !== undefined ? fmtBrix(w.brix) : "—"} $BRIX</b>
-              {" · "}<b className={lowBnb ? "low" : ""}>{w.bnb !== undefined ? fmtBnb(w.bnb) : "—"} BNB</b>
+              {t.balance}: <b className={lowBrix ? "low" : ""}>{w.brix !== undefined ? <Usd brix={w.brix}>{fmtBrix(w.brix)} $BRIX</Usd> : "— $BRIX"}</b>
+              {" · "}<b className={lowBnb ? "low" : ""}>{w.bnb !== undefined ? <Usd bnb={w.bnb}>{fmtBnb(w.bnb)} BNB</Usd> : "— BNB"}</b>
             </div>
           )}
         </div>
@@ -104,7 +107,7 @@ export default function Mint({ v }: { v?: VaultState }) {
               : needsApprove ? (
                 <>
                   <button className="act-btn" disabled={busy} onClick={approve}>{t.mintApprove(fmtBrix(needBrix))}</button>
-                  <div className="qty-note">{t.mintSteps}</div>
+                  <div className="steps-note">{t.mintSteps}</div>
                 </>
               ) : (
                 <button className="act-btn act-go" disabled={busy} onClick={mint}>{t.mintButton(n)}</button>

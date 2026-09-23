@@ -6,14 +6,14 @@ import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, SHOW_TOP_BURNERS } from "./lib/chain";
 import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib/format";
 import { useLang } from "./lib/i18n";
+import { Usd } from "./lib/prices";
 import { useVault, type VaultState } from "./lib/useVault";
 import Crack from "./sections/Crack";
 import How from "./sections/How";
 import Mint from "./sections/Mint";
+import { Cta } from "./sections/shared";
 import Redeem from "./sections/Redeem";
 import TopBurners from "./sections/TopBurners";
-
-const X_LINK = "https://x.com/BRIX_burns";
 
 type StatItem = { label: string; value: string };
 
@@ -200,11 +200,11 @@ export default function BrixPage() {
       <div className="burn-section">
         <div className="floor-label">{t.floorLabel}</div>
         <div className="burn-box floor-mode">
-          <div className="burn-value floor">{v ? fmtFloorPerMillion(v.floor) : placeholder}</div>
+          <div className="burn-value floor">{v ? <Usd bnb={v.floor * 1_000_000n}>{fmtFloorPerMillion(v.floor)}</Usd> : placeholder}</div>
         </div>
         <div className="floor-row">
-          <span>{t.reserve} <b className="bnb">{v ? `${fmtBnb(v.reserve)} BNB` : "—"}</b></span>
-          <span>{t.burned} <b>{v ? `${fmtBrix(v.burned)} $BRIX` : "—"}</b></span>
+          <span>{t.reserve} <b className="bnb">{v ? <Usd bnb={v.reserve}>{fmtBnb(v.reserve)} BNB</Usd> : "—"}</b></span>
+          <span>{t.burned} <b>{v ? <Usd brix={v.burned}>{fmtBrix(v.burned)} $BRIX</Usd> : "—"}</b></span>
         </div>
 
         {/* == MINT PROGRESS ================================================ */}
@@ -220,6 +220,8 @@ export default function BrixPage() {
         </div>
       </div>
 
+      <div className="tagline tagline-top"><Cta/></div>
+
       <Mint v={v}/>
       <Crack v={v}/>
       <Redeem/>
@@ -227,11 +229,7 @@ export default function BrixPage() {
       <How/>
 
       <div className="tagline">
-        <div className="tl-cta">
-          <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-            {t.follow} &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{verticalAlign:"middle",opacity:.85}}/>
-          </a>
-        </div>
+        <Cta/>
       </div>
 
       <footer>

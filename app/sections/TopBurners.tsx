@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { NET } from "../lib/chain";
 import { fmtBrix, fmtPct } from "../lib/format";
 import { useLang } from "../lib/i18n";
+import { Usd } from "../lib/prices";
 import type { VaultState } from "../lib/useVault";
 
 const SHOWN = 10;
@@ -45,7 +46,7 @@ export default function TopBurners({ v, preview }: { v?: VaultState; preview?: b
         <a href={`${NET.chain.blockExplorers.default.url}/address/${r.address}`} target="_blank" rel="noopener noreferrer">{short(r.address)}</a>
         {you && <span className="tb-you">{t.topYou}</span>}
       </td>
-      <td className="tb-num">{fmtBrix(r.burned)}</td>
+      <td className="tb-num"><Usd brix={r.burned}>{fmtBrix(r.burned)}</Usd></td>
       <td className="tb-num tb-share">{totalBurned > 0n ? fmtPct(r.burned, totalBurned) : "—"}</td>
     </tr>
   );
