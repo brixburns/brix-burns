@@ -18,6 +18,7 @@ const NETWORKS = {
     burnersTop: "https://brix-burners-testnet.420losrs.workers.dev/top",
     portal: "0x5bEacaF7ABCbB3aB280e80D007FD31fcE26510e9",
     opensea: "", // collection page, once it exists
+    burnWithBnb: false, // the long-run vault predates it: true after the next testnet deploy
     flap: "https://testnet.flap.sh/bnb-testnet/0x6a33B7E96370307BB58B6e0120155F0FCAC07777",
   },
   mainnet: {
@@ -33,6 +34,7 @@ const NETWORKS = {
     portal: "0xe2cE6ab80874Fa9Fa2aAE65D277Dd6B8e65C9De0", // recon-flap-bsc.md
     opensea: "",
     flap: "", // https://flap.sh/bnb/<token>
+    burnWithBnb: true,
   },
 } as const;
 

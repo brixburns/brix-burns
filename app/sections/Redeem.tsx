@@ -9,6 +9,7 @@ import { fmtBnb, fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
 import { Usd } from "../lib/prices";
 import { useTx } from "../lib/useTx";
+import BurnWithBnb from "./BurnWithBnb";
 import { Section, TxStatus, useWallet, WalletGate } from "./shared";
 
 const vault = NET.vault as `0x${string}`;
@@ -77,6 +78,8 @@ export default function Redeem() {
           </WalletGate>
           <TxStatus state={tx.state} done={last === "approve" ? t.approved : t.redeemDone}/>
         </div>
+
+        {NET.burnWithBnb && <BurnWithBnb/>}
       </div>
     </Section>
   );

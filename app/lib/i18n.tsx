@@ -77,6 +77,13 @@ const en = {
   redeemButton: "BURN & REDEEM",
   redeemNote: "Every redeem raises the floor for everyone else.",
   redeemDone: "Redeemed. The BNB is in your wallet.",
+  bwbTitle: "NO $BRIX? BURN WITH BNB",
+  bwbLead: "The vault buys $BRIX with your BNB at the market price and sends all of it to 0x…dEaD. Nothing comes back to you: it is a pure burn, and every $BRIX burned raises the floor.",
+  bwbAmount: "BNB TO SPEND",
+  bwbEstimate: "≈ $BRIX BURNED",
+  bwbButton: "BURN WITH BNB",
+  bwbDone: "Burned. Every $BRIX went to 0x…dEaD.",
+  bwbNoPrice: "Price unavailable, try again in a moment.",
 
   // crack
   crackTitle: "CRACK A TRIXSTER",
@@ -232,6 +239,13 @@ const zh: Dict = {
   redeemButton: "销毁并赎回",
   redeemNote: "每一次赎回都会为其他人抬高地板价。",
   redeemDone: "赎回成功。BNB 已发送至你的钱包。",
+  bwbTitle: "没有 $BRIX？用 BNB 销毁",
+  bwbLead: "金库用你的 BNB 按市价购买 $BRIX，并全部发送至 0x…dEaD。你不会收到任何东西：这是纯粹的销毁，每销毁一个 $BRIX 都会抬高地板价。",
+  bwbAmount: "要花费的 BNB",
+  bwbEstimate: "≈ 销毁的 $BRIX",
+  bwbButton: "用 BNB 销毁",
+  bwbDone: "销毁成功。所有 $BRIX 已发送至 0x…dEaD。",
+  bwbNoPrice: "暂时无法获取价格，请稍后再试。",
 
   crackTitle: "打碎 TRIXSTER",
   crackLead: "打碎会在 Robinhood Chain 上永久销毁你的 Trixster。销毁确认且等待期结束后，其 $BRIX 奖励将发送至你在 BNB Chain 上的地址。",

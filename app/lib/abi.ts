@@ -23,6 +23,7 @@ export const vaultAbi = parseAbi([
   "function mint(uint256 brix) payable returns (uint256 firstId)",
   "function crack(uint256[] tokenIds)",
   "function redeem(uint256 amount) returns (uint256 paid)",
+  "function burnWithBnb(uint256 minBrix) payable returns (uint256 burned)",
 ]);
 
 export const erc20Abi = parseAbi([

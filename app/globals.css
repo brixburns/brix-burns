@@ -603,30 +603,6 @@ nav {
   .tb-table th, .tb-table td { padding: 8px 8px; font-size: .62rem; }
 }
 
-/* ══ FAQ ══ */
-.faq-section { margin: 32px 24px 0; border: 1px solid var(--border); border-top: none; }
-.faq-header {
-  width: 100%; display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 28px; border-bottom: 1px solid var(--border);
-  font-family: var(--font-mono); font-size: .8rem; color: var(--gold);
-  letter-spacing: .2em; background: none; border-top: none; border-left: none; border-right: none;
-  cursor: pointer; transition: color .2s, background .2s; text-align: left;
-}
-.faq-header:hover { background: rgba(204,255,0,.03); }
-.faq-header .faq-icon { color: var(--gold); font-size: 1rem; }
-.faq-item { border-bottom: 1px solid var(--border); }
-.faq-item:last-child { border-bottom: none; }
-.faq-q {
-  width: 100%; display: flex; justify-content: space-between; align-items: center;
-  background: none; border: none; cursor: pointer;
-  padding: 16px 28px; text-align: left; gap: 16px; transition: background .2s;
-}
-.faq-q:hover { background: rgba(204,255,0,.03); }
-.faq-q span:first-child { font-family: var(--font-mono); font-size: .75rem; color: var(--white); letter-spacing: .04em; line-height: 1.4; }
-.faq-icon { font-family: var(--font-orb); font-size: 1rem; color: var(--gold); flex-shrink: 0; width: 16px; text-align: center; }
-.faq-a { padding: 0 28px 16px; font-size: .7rem; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--border); padding-top: 12px; }
-.faq-item.open .faq-q span:first-child { color: var(--gold); }
-
 /* ══ FOOTER ══ */
 footer { padding: 32px 24px; text-align: center; border-top: 1px solid var(--border); margin-top: 24px; }
 .footer-line  { font-size: .7rem; color: var(--dim); letter-spacing: .2em; margin-bottom: 4px; }
@@ -769,6 +745,14 @@ html { scroll-behavior: smooth; }
 .tier.empty .tier-n { color: var(--dim); }
 
 /* ══ SITE V2 — FAQ (expand / collapse) ══ */
+/* the whole section: only "FAQ +" until opened */
+.faq-toggle { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 14px; }
+.faq-toggle::-webkit-details-marker { display: none; }
+.faq-toggle .panel-title { display: inline; }
+.faq-toggle-sign::after { content: "+"; font-family: var(--font-orb); font-weight: 900; font-size: clamp(1.4rem, 5vw, 2.1rem); color: var(--gold); line-height: 1; }
+.faq-section[open] .faq-toggle-sign::after { content: "−"; }
+.faq-toggle:hover .panel-title, .faq-toggle:hover .faq-toggle-sign::after { color: var(--white); }
+.faq-toggle:focus-visible { outline: 1px solid var(--gold); outline-offset: 6px; }
 .faq-list { margin-top: 26px; border-top: 1px solid var(--border); }
 .faq-item { border-bottom: 1px solid var(--border); }
 .faq-q {
@@ -789,6 +773,13 @@ html { scroll-behavior: smooth; }
 .contract-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 6px 0; border-top: 1px solid rgba(42,42,0,.6); font-size: .64rem; }
 .cr-label { color: var(--white); letter-spacing: .12em; }
 .cr-chain { color: var(--dim); letter-spacing: .04em; }
+
+/* ══ SITE V2 — burn with BNB, a box inside the redeem panel ══ */
+.bwb { border: 1px dashed rgba(255,75,31,.45); padding: 16px; display: flex; flex-direction: column; gap: 12px; text-align: center; }
+.bwb-title { font-family: var(--font-orb); font-weight: 700; font-size: .78rem; letter-spacing: .12em; color: var(--orange); }
+.bwb-row { display: flex; gap: 16px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.bwb-field { flex: 1 1 180px; max-width: 260px; }
+.bwb .act-btn { max-width: 320px; font-size: .75rem; padding: 11px 14px; }
 .cr-addr { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .cr-addr a { color: var(--gold); text-decoration: none; word-break: break-all; font-size: .62rem; }
 .cr-addr a:hover { color: var(--white); }
