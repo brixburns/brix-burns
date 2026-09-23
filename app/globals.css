@@ -817,6 +817,10 @@ html { scroll-behavior: smooth; }
 .btn-opensea.btn-disabled, .btn-opensea.btn-disabled:hover { opacity: 1; box-shadow: 0 0 10px rgba(10,140,255,.25); }
 .link-opensea { color: var(--opensea); }
 
+/* Flap: outline and text in lime, like the other CTAs; its logo is lime too */
+.btn-flap { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 10px rgba(204,255,0,.2); }
+.btn-flap:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 20px rgba(204,255,0,.45); }
+
 /* ══ SITE V2 — hero like the social image; brand logos in buttons ══ */
 .h-bnb { color: var(--bnb); }
 .h-logo { display: inline-block; width: auto; height: .62em; margin-right: .16em; vertical-align: -.02em; }
