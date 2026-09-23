@@ -14,9 +14,9 @@ const FETCHED = 500; // the worker's maximum: enough to find the connected walle
 type Row = { rank: number; address: string; burned: bigint };
 
 /**
- * The worker recounts every 5 minutes, so asking more often is wasted: its
- * free plan is 100,000 requests a day across all visitors. After an error,
- * stop asking instead of retrying.
+ * A leaderboard isn't urgent: refresh every 15 minutes (the worker recounts
+ * every 5). Its free plan is 100,000 requests a day across all visitors.
+ * After an error, stop asking instead of retrying.
  */
 function useTop() {
   return useQuery({
@@ -30,7 +30,7 @@ function useTop() {
     enabled: !!NET.burnersTop,
     retry: false,
     refetchOnWindowFocus: false,
-    refetchInterval: (query) => (query.state.status === "error" ? false : 5 * 60_000),
+    refetchInterval: (query) => (query.state.status === "error" ? false : 15 * 60_000),
   });
 }
 
