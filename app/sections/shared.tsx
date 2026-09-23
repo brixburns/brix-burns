@@ -66,29 +66,35 @@ export function TxStatus({ state, done }: { state: TxState; done: string }) {
 const X_LINK = "https://x.com/BRIX_burns";
 
 /** A button that is a link once its destination exists, disabled until then. */
-function LinkBtn({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+function LinkBtn({ href, className, label, children }: { href: string; className: string; label: string; children: React.ReactNode }) {
   const { t } = useLang();
   return href
-    ? <a href={href} target="_blank" rel="noopener noreferrer" className={`btn ${className}`}>{children}</a>
-    : <span className={`btn ${className} btn-disabled`} title={t.notLive} aria-disabled="true">{children}</span>;
+    ? <a href={href} target="_blank" rel="noopener noreferrer" className={`btn ${className}`} aria-label={label}>{children}</a>
+    : <span className={`btn ${className} btn-disabled`} title={t.notLive} aria-label={label} aria-disabled="true">{children}</span>;
 }
 
-/** GET $BRIX (Flap), OpenSea, X, with the platforms' own logos. */
+/**
+ * GET $BRIX (Flap), OpenSea, X, with the platforms' own logos. On phones the
+ * three stay side by side: the words go and only the marks remain.
+ */
 export function Cta() {
   const { t } = useLang();
   return (
-    <div className="tl-cta">
-      {/* Flap's wordmark in dark: the original is lime, like this button */}
-      <LinkBtn href={NET.flap} className="btn-primary btn-brand">
-        {t.getBrixBtn}
-        <Image src="/flap-logo-dark.svg" alt="Flap" width={93} height={16}/>
+    <div className="tl-cta cta-brands">
+      {/* Flap's logo in dark: the original is lime, like this button */}
+      <LinkBtn href={NET.flap} className="btn-primary btn-brand" label={`${t.getBrixBtn} Flap`}>
+        <span className="cta-words">{t.getBrixBtn}</span>
+        <Image src="/flap-logo-dark.svg" alt="" width={93} height={16} className="cta-full"/>
+        <Image src="/flap-mark-dark.svg" alt="" width={24} height={20} className="cta-mark"/>
       </LinkBtn>
-      <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand">
-        {t.openseaBtn}
-        <Image src="/opensea-logo.svg" alt="OpenSea" width={77} height={20}/>
+      <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand" label={`${t.openseaBtn} OpenSea`}>
+        <span className="cta-words">{t.openseaBtn}</span>
+        <Image src="/opensea-logo.svg" alt="" width={77} height={20} className="cta-full"/>
+        <Image src="/opensea-mark.svg" alt="" width={24} height={24} className="cta-mark"/>
       </LinkBtn>
-      <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
-        {t.follow} &nbsp;<Image src="/logox.svg" alt="X" width={14} height={14} style={{ verticalAlign: "middle", opacity: .85 }}/>
+      <a href={X_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-brand" aria-label={`${t.follow} X`}>
+        <span className="cta-words">{t.follow}</span>
+        <Image src="/logox.svg" alt="" width={14} height={14} style={{ opacity: .85 }}/>
       </a>
     </div>
   );

@@ -142,7 +142,7 @@ export default function Crack({ v }: { v?: VaultState }) {
           </WalletGate>
           <TxStatus state={tx.state} done={t.crackDone}/>
           <div className="qty-note">{t.crackEoa}</div>
-          {NET.opensea && w.address && (
+          {w.address && (
             <a className="link-btn link-opensea" href={openseaProfile(w.address)} target="_blank" rel="noopener noreferrer">{t.openseaMine}</a>
           )}
           {!!pending && <div className="qty-note pending-note">{t.pendingDowries(pending)}</div>}

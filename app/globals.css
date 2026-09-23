@@ -811,9 +811,10 @@ html { scroll-behavior: smooth; }
 .tagline-top { padding: 34px 24px 0; }
 
 /* ══ SITE V2 — OpenSea: outline in OpenSea blue ══ */
-:root { --opensea: #2081e2; }
-.btn-opensea { border-color: var(--opensea); }
-.btn-opensea:hover { border-color: var(--opensea); color: var(--opensea); box-shadow: 0 0 16px rgba(32,129,226,.35); }
+:root { --opensea: #0a8cff; }
+.btn-opensea { border-color: var(--opensea); color: var(--white); box-shadow: 0 0 10px rgba(10,140,255,.25); }
+.btn-opensea:hover { border-color: var(--opensea); color: var(--white); box-shadow: 0 0 20px rgba(10,140,255,.55); }
+.btn-opensea.btn-disabled, .btn-opensea.btn-disabled:hover { opacity: 1; box-shadow: 0 0 10px rgba(10,140,255,.25); }
 .link-opensea { color: var(--opensea); }
 
 /* ══ SITE V2 — hero like the social image; brand logos in buttons ══ */
@@ -822,3 +823,12 @@ html { scroll-behavior: smooth; }
 
 .btn-brand { display: inline-flex; align-items: center; gap: 8px; }
 .btn-opensea { font-family: inherit; }
+
+/* ══ SITE V2 — CTA: marks only on phones, three side by side ══ */
+.cta-mark { display: none; }
+@media (max-width: 540px) {
+  .cta-brands { flex-wrap: nowrap; gap: 10px; padding: 0 4px; }
+  .cta-brands .btn { flex: 1 1 0; justify-content: center; padding-left: 0; padding-right: 0; min-width: 0; }
+  .cta-brands .cta-words, .cta-brands .cta-full { display: none; }
+  .cta-brands .cta-mark { display: block; }
+}
