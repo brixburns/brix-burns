@@ -21,7 +21,10 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm install --no-audit --no-fund
+      # The published site reads mainnet; local builds default to testnet (app/lib/chain.ts).
       - run: npm run build
+        env:
+          NEXT_PUBLIC_NETWORK: mainnet
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
