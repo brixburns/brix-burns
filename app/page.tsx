@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH, SHOW_TOP_BURNERS } from "./lib/chain";
+import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH } from "./lib/chain";
 import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib/format";
 import { useLang } from "./lib/i18n";
 import { Usd } from "./lib/prices";
@@ -169,8 +169,8 @@ export default function BrixPage() {
             <li><a href="#mint" className="nav-mint">{t.navMint}</a></li>
             <li><a href="#crack" className="nav-burners">{t.navCrack}</a></li>
             <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
+            <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>
           </>}
-          {SHOW_TOP_BURNERS && <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>}
           <li><a href="#how">{t.navHow}</a></li>
           <li><a href="#faq" className="nav-faq">{t.faqTitle}</a></li>
         </ul>
@@ -252,8 +252,8 @@ export default function BrixPage() {
         <Mint v={v}/>
         <Crack v={v}/>
         <Redeem/>
+        <TopBurners v={v}/>
       </>}
-      {SHOW_TOP_BURNERS && <TopBurners v={v} preview={process.env.NODE_ENV === "development"}/>}
       <How/>
       <Faq/>
 
