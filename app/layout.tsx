@@ -17,8 +17,10 @@ const barlowCondensed = Barlow_Condensed({
   display: "swap",
 });
 
+// Orbitron is a variable font: asking for 700 and 900 separately gets the same
+// file twice from Google, which breaks next/font's build. One variable entry
+// covers every weight.
 const orbitron = Orbitron({
-  weight: ["700", "900"],
   subsets: ["latin"],
   variable: "--brix-font-orb",
   display: "swap",
