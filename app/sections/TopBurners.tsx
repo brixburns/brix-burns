@@ -93,9 +93,13 @@ function useNow(): number {
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const clock = (unix: number) => new Date(unix * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+/** Rounds close on UTC time (Monday 00:00 in mainnet): show it in UTC, as the posts do. */
+const utc = (unix: number, lang: string) => new Date(unix * 1000).toLocaleString(lang === "zh" ? "zh-CN" : "en-GB", {
+  timeZone: "UTC", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+});
 
 export default function TopBurners({ v }: { v?: VaultState }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { address } = useAccount();
   const now = useNow();
   const round = useRound();
@@ -150,6 +154,7 @@ export default function TopBurners({ v }: { v?: VaultState }) {
           <div>
             <div className="mp-label">{t.topEndsIn}</div>
             <div className="tb-ends">{fmtCountdown(round.endsAt - now)}</div>
+            <div className="qty-note">{t.topClosesAt(utc(round.endsAt, lang))}</div>
           </div>
         </div>
       )}
