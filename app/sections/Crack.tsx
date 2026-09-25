@@ -7,6 +7,7 @@ import { trixsterAbi, vaultAbi } from "../lib/abi";
 import { MAX_PER_CRACK, NET } from "../lib/chain";
 import { fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
+import { useInView } from "../lib/useInView";
 import { useTx } from "../lib/useTx";
 import type { VaultState } from "../lib/useVault";
 import { Section, TxStatus, useWallet, WalletGate } from "./shared";
@@ -37,12 +38,16 @@ function useOwned(address: string | undefined, minted: number) {
 /** The holder's OpenSea profile: it lists their Trixsters among everything else they own. */
 const openseaProfile = (address: string) => `https://opensea.io/${address}`;
 
+const FIVE_MIN = 5 * 60_000;
+
 /**
  * Confirmed cracks the relayer has yet to pay (worker GET /status). The
- * workers' free plan is 100,000 requests a day: ask only with a wallet
- * connected, and after an error stop asking instead of retrying.
+ * workers' free plan is 100,000 requests a day across all visitors, so ask
+ * only with a wallet connected and the crack section on screen, at most every
+ * 5 minutes (a hidden tab doesn't poll either), and after an error stop
+ * asking instead of retrying.
  */
-function usePendingPayouts(connected: boolean): number | undefined {
+function usePendingPayouts(active: boolean): number | undefined {
   const { data } = useQuery({
     queryKey: ["relayer-status"],
     queryFn: async () => {
@@ -51,10 +56,11 @@ function usePendingPayouts(connected: boolean): number | undefined {
       const body = (await res.json()) as { pendingPayouts?: string[] };
       return body.pendingPayouts?.length ?? 0;
     },
-    enabled: connected && !!NET.relayerStatus,
+    enabled: active && !!NET.relayerStatus,
+    staleTime: FIVE_MIN, // scrolling away and back doesn't ask again
     retry: false,
     refetchOnWindowFocus: false,
-    refetchInterval: (query) => (query.state.status === "error" ? false : 60_000),
+    refetchInterval: (query) => (query.state.status === "error" ? false : FIVE_MIN),
   });
   return data;
 }
@@ -68,7 +74,8 @@ export default function Crack({ v }: { v?: VaultState }) {
   const [picked, setPicked] = useState<Set<number>>(new Set());
   const [manual, setManual] = useState("");
   const [sent, setSent] = useState<Set<number>>(new Set());
-  const pending = usePendingPayouts(!!w.address);
+  const { ref: cardRef, inView } = useInView<HTMLDivElement>();
+  const pending = usePendingPayouts(!!w.address && inView);
 
   const { data: dowries } = useReadContracts({
     contracts: owned.map((id) => ({
@@ -103,7 +110,7 @@ export default function Crack({ v }: { v?: VaultState }) {
 
   return (
     <Section id="crack" title={t.crackTitle} lead={t.crackLead}>
-      <div className="mint-card">
+      <div className="mint-card" ref={cardRef}>
         {v && !v.finalized && <div className="mint-warn">{t.crackBlind}</div>}
 
         {w.address && (
