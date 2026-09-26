@@ -106,6 +106,51 @@ function LangToggle() {
   );
 }
 
+// ── NAV LINKS ────────────────────────────────────────────────────────────────
+type NavLink = { href: string; label: string; cls: string };
+
+function useNavLinks(): NavLink[] {
+  const { t } = useLang();
+  return [
+    ...(PRELAUNCH ? [] : [
+      { href: "#mint", label: t.navMint, cls: "nav-mint" },
+      { href: "#crack", label: t.navCrack, cls: "nav-burners" },
+      { href: "#redeem", label: t.navRedeem, cls: "nav-redeem" },
+      { href: "#top-burners", label: t.navTop, cls: "nav-burners" },
+    ]),
+    { href: "#how", label: t.navHow, cls: "" },
+    { href: "#faq", label: t.faqTitle, cls: "nav-faq" },
+  ];
+}
+
+/** Below 960px the links don't fit: a burger opens them in a dropdown. */
+function BurgerMenu({ links }: { links: NavLink[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onClick); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+  return (
+    <div className="burger" ref={ref}>
+      <button className="burger-btn" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        {open ? "✕" : "☰"}
+      </button>
+      {open && (
+        <ul className="burger-menu">
+          {links.map((l) => (
+            <li key={l.href}><a href={l.href} className={`nav-links-item ${l.cls}`} onClick={() => setOpen(false)}>{l.label}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 // ── MINT CLOCK ───────────────────────────────────────────────────────────────
 function MintClock({ v, now }: { v: VaultState; now: number }) {
   const { t } = useLang();
@@ -142,6 +187,7 @@ export default function BrixPage() {
   }, []);
   useEffect(() => () => { if (copyTimerRef.current) clearTimeout(copyTimerRef.current); }, []);
 
+  const navLinks = useNavLinks();
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const mintedPct = v ? Math.min((v.minted / MAX_TRIXSTERS) * 100, 100) : 0;
 
@@ -165,19 +211,13 @@ export default function BrixPage() {
         {IS_TESTNET && <span className="net-badge">{t.testnet}</span>}
 
         <ul className="nav-links">
-          {!PRELAUNCH && <>
-            <li><a href="#mint" className="nav-mint">{t.navMint}</a></li>
-            <li><a href="#crack" className="nav-burners">{t.navCrack}</a></li>
-            <li><a href="#redeem" className="nav-redeem">{t.navRedeem}</a></li>
-            <li><a href="#top-burners" className="nav-burners">{t.navTop}</a></li>
-          </>}
-          <li><a href="#how">{t.navHow}</a></li>
-          <li><a href="#faq" className="nav-faq">{t.faqTitle}</a></li>
+          {navLinks.map((l) => <li key={l.href}><a href={l.href} className={l.cls}>{l.label}</a></li>)}
         </ul>
 
         <div className="nav-right-group">
           <LangToggle/>
           {!PRELAUNCH && <WalletButton/>}
+          <BurgerMenu links={navLinks}/>
         </div>
       </nav>
 
