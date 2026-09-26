@@ -188,6 +188,12 @@ const en = {
   contractVault: "VAULT",
   contractTrixster: "TRIXSTER",
   contractsSoon: "Published at launch",
+  contractDevLock: "DEV RESERVE LOCK",
+  lockNote: "80% of the 1% dev reserve, in a contract with no owner: nobody can unlock it early, not even the team.",
+  lockLocked: "LOCKED",
+  lockUnlocksIn: "UNLOCKS IN",
+  lockUnlocked: "UNLOCKED",
+  lockTo: "RELEASED ONLY TO",
   copy: "Copy",
 
   // how it works
@@ -380,6 +386,12 @@ const zh: Dict = {
   contractVault: "金库",
   contractTrixster: "TRIXSTER",
   contractsSoon: "上线时公布",
+  contractDevLock: "开发者储备锁仓",
+  lockNote: "1% 开发者储备中的 80%，锁在没有管理员的合约中：任何人（包括团队）都无法提前解锁。",
+  lockLocked: "锁定数量",
+  lockUnlocksIn: "解锁倒计时",
+  lockUnlocked: "已解锁",
+  lockTo: "只能释放给",
   copy: "复制",
 
   howTitle: "运作方式",

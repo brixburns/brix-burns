@@ -14,6 +14,7 @@ const NETWORKS = {
     vault: "0xc30e3de612D1B9B5416efD6135f1F324F6239dCF",
     trixster: "0x073632ae1e737f87629e27ed8f814d6f83b16f50",
     creatorShare: "0x5bd24ebe03ebe8d5cd9777cde0442f7379fc0a69",
+    devLock: "", // TokenLock of the dev reserve: none on testnet yet
     rhChain: robinhoodTestnet,
     rhRpc: "https://rpc.testnet.chain.robinhood.com",
     relayerStatus: "https://brix-relayer-testnet.420losrs.workers.dev/status",
@@ -30,6 +31,7 @@ const NETWORKS = {
     vault: "",
     trixster: "",
     creatorShare: "",
+    devLock: "", // TokenLock: 80% of the 1% dev reserve, published at launch
     rhChain: robinhood,
     rhRpc: "https://rpc.mainnet.chain.robinhood.com",
     relayerStatus: "https://brix-relayer.420losrs.workers.dev/status",

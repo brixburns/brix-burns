@@ -71,7 +71,9 @@ nav {
 .copy-btn { background: transparent; border: none; color: var(--dim); padding: 1px 2px; cursor: pointer; line-height: 0; display: flex; align-items: center; transition: color .2s; }
 .copy-btn:hover { color: var(--gold); }
 
-.nav-links { display: flex; gap: 16px; list-style: none; margin-left: auto; }
+.nav-links { display: flex; gap: 16px; list-style: none; margin-left: auto; white-space: nowrap; }
+/* seven items don't fit a mid-size window: below 960px the page scrolls on its own */
+@media (max-width: 960px) { .nav-links { display: none; } }
 .nav-links a, .nav-links button {
   color: var(--dim); text-decoration: none; background: none; border: none;
   font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em;
@@ -101,7 +103,7 @@ nav {
 .nav-links .nav-docs, .nav-dropdown a.dropdown-docs { color: var(--white); }
 
 .nav-right-group { display: flex; align-items: center; gap: 8px; margin-left: auto; position: relative; }
-@media (min-width: 641px) { .nav-right-group { margin-left: 0; } }
+@media (min-width: 961px) { .nav-right-group { margin-left: 0; } }
 
 .price-inline { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; }
 .pi-num    { font-family: var(--font-orb); font-size: .85rem; color: var(--gold); }
@@ -835,6 +837,13 @@ html { scroll-behavior: smooth; }
 .cr-addr a:hover { color: var(--white); }
 .cr-addr .copy-btn { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; line-height: 1; border: 1px solid var(--border); padding: 3px 6px; }
 .cr-soon { color: var(--dim); font-style: italic; }
+.dev-lock { border-top: 1px solid rgba(42,42,0,.6); margin-top: 6px; padding-top: 10px; text-align: center; }
+.dl-note { font-size: .6rem; color: var(--dim); line-height: 1.7; margin-bottom: 10px; }
+.dl-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dl-value { font-family: var(--font-orb); font-size: .78rem; color: var(--white); }
+.dl-value a { color: var(--gold); text-decoration: none; }
+.dl-pct { color: var(--dim); font-size: .62rem; }
+@media (max-width: 540px) { .dl-facts { grid-template-columns: 1fr; } }
 
 @media (max-width: 640px) {
   .how-grid { grid-template-columns: 1fr; }

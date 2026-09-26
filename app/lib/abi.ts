@@ -38,6 +38,13 @@ export const portalAbi = parseAbi([
   "function getTokenV2(address token) view returns (uint8 status, uint256 reserve, uint256 circulatingSupply, uint256 price, uint8 tokenVersion, uint256 r, uint256 dexSupplyThresh)",
 ]);
 
+// TokenLock: the dev reserve, locked until a fixed date. No owner, no early release.
+export const lockAbi = parseAbi([
+  "function locked() view returns (uint256)",
+  "function unlockAt() view returns (uint256)",
+  "function beneficiary() view returns (address)",
+]);
+
 // Trixster on Robinhood Chain: not enumerable, so ownership is read id by id.
 export const trixsterAbi = parseAbi([
   "function ownerOf(uint256 tokenId) view returns (address)",
