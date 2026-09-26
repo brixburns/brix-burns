@@ -9,12 +9,12 @@ const NETWORKS = {
   testnet: {
     chain: bscTestnet,
     rpc: "https://bsc-testnet-rpc.publicnode.com",
-    // the 24/09 deploy ("stress"), the one the testnet workers run on
-    token: "0xCe3ab65e67873B4F3186CB882B5fd961A00f7777",
-    vault: "0xc30e3de612D1B9B5416efD6135f1F324F6239dCF",
-    trixster: "0x073632ae1e737f87629e27ed8f814d6f83b16f50",
-    creatorShare: "0x5bd24ebe03ebe8d5cd9777cde0442f7379fc0a69",
-    devLock: "", // TokenLock of the dev reserve: none on testnet yet
+    // the stress test of 26/09 (BRIX VAULT/deploy/testnet.json), the one the testnet workers run on
+    token: "0x5e075B335d49cf9e83900b9E1f90C13ADC3f7777",
+    vault: "0x3195D3167c3569244C4E8a3C688264812cE3491a",
+    trixster: "0x12597cb9ba7ed2e6a788057f43387f1e971e9008",
+    creatorShare: "0xce531032c7158df9ffd316b59707c3d1f8b2a4a1",
+    devLock: "0x49f94745722a2c7fa3832786ac7f64815fb9cfc1",
     rhChain: robinhoodTestnet,
     rhRpc: "https://rpc.testnet.chain.robinhood.com",
     relayerStatus: "https://brix-relayer-testnet.420losrs.workers.dev/status",
@@ -22,7 +22,7 @@ const NETWORKS = {
     portal: "0x5bEacaF7ABCbB3aB280e80D007FD31fcE26510e9",
     opensea: "", // collection page, once it exists
     burnWithBnb: true,
-    flap: "https://testnet.flap.sh/bnb-testnet/0xCe3ab65e67873B4F3186CB882B5fd961A00f7777",
+    flap: "https://testnet.flap.sh/bnb-testnet/0x5e075B335d49cf9e83900b9E1f90C13ADC3f7777",
   },
   mainnet: {
     chain: bsc,
