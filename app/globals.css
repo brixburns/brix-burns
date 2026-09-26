@@ -816,6 +816,11 @@ html { scroll-behavior: smooth; }
 .cr-label { color: var(--white); letter-spacing: .12em; }
 .cr-chain { color: var(--dim); letter-spacing: .04em; }
 
+/* ══ SITE V2 — live burn-or-sell verdict, top of the redeem panel ══ */
+.verdict { align-self: center; font-family: var(--font-orb); font-weight: 700; font-size: .7rem; letter-spacing: .1em; padding: 7px 14px; text-align: center; }
+.verdict-burn { color: var(--bnb); border: 1px solid var(--bnb); background: rgba(240,185,11,.08); box-shadow: 0 0 14px rgba(240,185,11,.2); }
+.verdict-sell { color: var(--dim); border: 1px solid var(--border); }
+
 /* ══ SITE V2 — burn with BNB, a box inside the redeem panel ══ */
 .bwb { border: 1px dashed rgba(255,75,31,.45); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; text-align: center; max-width: 520px; width: 100%; margin: 0 auto; }
 .bwb-title { font-family: var(--font-orb); font-weight: 700; font-size: .68rem; letter-spacing: .12em; color: var(--orange); }

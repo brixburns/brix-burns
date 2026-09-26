@@ -7,7 +7,8 @@ import { erc20Abi, vaultAbi } from "../lib/abi";
 import { NET } from "../lib/chain";
 import { fmtBnb, fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
-import { Usd } from "../lib/prices";
+import { usePrices, Usd } from "../lib/prices";
+import type { VaultState } from "../lib/useVault";
 import { useTx } from "../lib/useTx";
 import BurnWithBnb from "./BurnWithBnb";
 import { Section, TxStatus, useWallet, WalletGate } from "./shared";
@@ -18,8 +19,21 @@ function parseBrix(s: string): bigint {
   try { return s ? parseUnits(s.replace(/,/g, ""), 18) : 0n; } catch { return 0n; }
 }
 
-export default function Redeem() {
+/**
+ * Burn or sell, right now? Redeem pays 95% of the floor; selling pays the
+ * price minus the 3% tax (slippage aside). Both per $BRIX, in BNB. No price
+ * or no floor, no verdict.
+ */
+function useBurnOrSell(v?: VaultState): "burn" | "sell" | undefined {
+  const { brixBnb } = usePrices();
+  if (!v || !brixBnb || v.floor === 0n) return undefined;
+  const floor = Number(v.floor) / 1e18;
+  return floor * 0.95 > brixBnb * 0.97 ? "burn" : "sell";
+}
+
+export default function Redeem({ v }: { v?: VaultState }) {
   const { t } = useLang();
+  const verdict = useBurnOrSell(v);
   const w = useWallet();
   const tx = useTx();
   const [input, setInput] = useState("");
@@ -46,6 +60,9 @@ export default function Redeem() {
   return (
     <Section id="redeem" title={t.redeemTitle} lead={t.redeemLead}>
       <div className="mint-card">
+        {verdict && (
+          <div className={`verdict verdict-${verdict}`}>{verdict === "burn" ? t.burnBetter : t.sellBetter}</div>
+        )}
         <div className="qty">
           <label className="mp-label" htmlFor="redeem-amount">{t.redeemAmount}</label>
           <div className="amount-row">

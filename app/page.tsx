@@ -251,7 +251,7 @@ export default function BrixPage() {
       {!PRELAUNCH && <>
         <Mint v={v}/>
         <Crack v={v}/>
-        <Redeem/>
+        <Redeem v={v}/>
         <TopBurners v={v}/>
       </>}
       <How/>
