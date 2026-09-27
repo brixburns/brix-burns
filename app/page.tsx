@@ -7,6 +7,7 @@ import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH } from "./lib
 import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib/format";
 import { useLang } from "./lib/i18n";
 import { Usd } from "./lib/prices";
+import { fmtRatio, useFloorToPrice } from "./lib/ratio";
 import { useVault, type VaultState } from "./lib/useVault";
 import Contracts from "./sections/Contracts";
 import Crack from "./sections/Crack";
@@ -169,8 +170,10 @@ export default function BrixPage() {
   const [copied, setCopied] = useState(false);
 
   const placeholder = error ? t.offline : "—";
+  const floorToPrice = useFloorToPrice(v?.floor);
   const stats: StatItem[] = [
     { label: t.floorLabel, value: v ? fmtFloorPerMillion(v.floor) : placeholder },
+    { label: t.ratioLabel, value: floorToPrice !== undefined ? fmtRatio(floorToPrice) : placeholder },
     { label: t.reserve,    value: v ? `${fmtBnb(v.reserve)} BNB` : placeholder },
     { label: t.supply,     value: v ? fmtBrix(v.supply) : placeholder },
     { label: t.burned,     value: v ? fmtPct(v.burned, INITIAL_SUPPLY) : placeholder },

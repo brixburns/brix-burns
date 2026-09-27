@@ -78,7 +78,7 @@ const en = {
 
   // redeem
   redeemTitle: "BURN FOR THE FLOOR",
-  redeemLead: "Redeem burns your $BRIX and pays its share of the BNB reserve, minus 5% left to everyone who stays. Worth it when the market price is below the floor.",
+  redeemLead: "Redeem burns your $BRIX and pays its share of the BNB reserve, minus 5% left to everyone who stays. When the price drops a little below the floor (about 2%), burning pays more than selling.",
   redeemAmount: "$BRIX TO BURN",
   redeemMax: "MAX",
   redeemGet: "YOU RECEIVE",
@@ -86,6 +86,8 @@ const en = {
   redeemButton: "BURN & REDEEM",
   redeemNote: "Every redeem raises the floor for everyone else.",
   burnBetter: "Burning pays more than selling right now",
+  ratioLabel: "FLOOR / PRICE",
+  ratioHint: "Burning pays more above 102%",
   sellBetter: "Selling pays more right now",
   redeemDone: "Redeemed. The BNB is in your wallet.",
   bwbTitle: "NO $BRIX? BURN WITH BNB",
@@ -280,7 +282,7 @@ const zh: Dict = {
   mintClosedBody: "铸造已结束。Trixster 可在 OpenSea 交易。",
 
   redeemTitle: "销毁换取地板价",
-  redeemLead: "赎回会销毁你的 $BRIX 并支付其对应的 BNB 储备金份额，其中 5% 留给其他持有者。当市场价格低于地板价时更划算。",
+  redeemLead: "赎回会销毁你的 $BRIX 并支付其对应的 BNB 储备金份额，其中 5% 留给其他持有者。当价格略低于地板价（约 2%）时，销毁比卖出更划算。",
   redeemAmount: "要销毁的 $BRIX",
   redeemMax: "最大",
   redeemGet: "你将获得",
@@ -288,6 +290,8 @@ const zh: Dict = {
   redeemButton: "销毁并赎回",
   redeemNote: "每一次赎回都会为其他人抬高地板价。",
   burnBetter: "此刻销毁比卖出更划算",
+  ratioLabel: "地板价 / 价格",
+  ratioHint: "高于 102% 时销毁更划算",
   sellBetter: "此刻卖出更划算",
   redeemDone: "赎回成功。BNB 已发送至你的钱包。",
   bwbTitle: "没有 $BRIX？用 BNB 销毁",

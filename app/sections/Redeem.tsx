@@ -7,7 +7,8 @@ import { erc20Abi, vaultAbi } from "../lib/abi";
 import { NET } from "../lib/chain";
 import { fmtBnb, fmtBrix } from "../lib/format";
 import { useLang } from "../lib/i18n";
-import { usePrices, Usd } from "../lib/prices";
+import { Usd } from "../lib/prices";
+import { BURN_ABOVE, fmtRatio, useFloorToPrice } from "../lib/ratio";
 import type { VaultState } from "../lib/useVault";
 import { useTx } from "../lib/useTx";
 import BurnWithBnb from "./BurnWithBnb";
@@ -19,21 +20,27 @@ function parseBrix(s: string): bigint {
   try { return s ? parseUnits(s.replace(/,/g, ""), 18) : 0n; } catch { return 0n; }
 }
 
-/**
- * Burn or sell, right now? Redeem pays 95% of the floor; selling pays the
- * price minus the 3% tax (slippage aside). Both per $BRIX, in BNB. No price
- * or no floor, no verdict.
- */
-function useBurnOrSell(v?: VaultState): "burn" | "sell" | undefined {
-  const { brixBnb } = usePrices();
-  if (!v || !brixBnb || v.floor === 0n) return undefined;
-  const floor = Number(v.floor) / 1e18;
-  return floor * 0.95 > brixBnb * 0.97 ? "burn" : "sell";
+/** The gauge fills toward the burn threshold and stops there. */
+function RatioGauge({ ratio }: { ratio: number }) {
+  const { t } = useLang();
+  const fill = Math.min(ratio / BURN_ABOVE, 1) * 100;
+  return (
+    <div className="ratio">
+      <div className="ratio-head">
+        <span className="mp-label">{t.ratioLabel}</span>
+        <span className={`ratio-value${ratio > BURN_ABOVE ? " over" : ""}`}>{fmtRatio(ratio)}</span>
+      </div>
+      <div className="ratio-track"><div className="ratio-fill" style={{ width: `${fill}%` }}/></div>
+      <div className="qty-note">{t.ratioHint}</div>
+    </div>
+  );
 }
 
 export default function Redeem({ v }: { v?: VaultState }) {
   const { t } = useLang();
-  const verdict = useBurnOrSell(v);
+  // Burn or sell, right now: one number, FLOOR / PRICE, drives both the verdict and the gauge.
+  const ratio = useFloorToPrice(v?.floor);
+  const verdict = ratio === undefined ? undefined : ratio > BURN_ABOVE ? "burn" : "sell";
   const w = useWallet();
   const tx = useTx();
   const [input, setInput] = useState("");
@@ -63,6 +70,7 @@ export default function Redeem({ v }: { v?: VaultState }) {
         {verdict && (
           <div className={`verdict verdict-${verdict}`}>{verdict === "burn" ? t.burnBetter : t.sellBetter}</div>
         )}
+        {ratio !== undefined && <RatioGauge ratio={ratio}/>}
         <div className="qty">
           <label className="mp-label" htmlFor="redeem-amount">{t.redeemAmount}</label>
           <div className="amount-row">
