@@ -19,9 +19,15 @@ export function fmtFloorPerMillion(floor: bigint): string {
   return fmtBnb(floor * 1_000_000n);
 }
 
+/**
+ * 12.34%, and below 1% two significant digits (0.0035%): a first burn of
+ * 34,500 out of a billion must not read as 0.00%.
+ */
 export function fmtPct(part: bigint, whole: bigint): string {
-  if (whole === 0n) return "0.00%";
-  return `${(Number((part * 1_000_000n) / whole) / 10_000).toFixed(2)}%`;
+  if (whole === 0n || part === 0n) return "0.00%";
+  const pct = Number((part * 10n ** 12n) / whole) / 1e10;
+  if (pct >= 1) return `${pct.toFixed(2)}%`;
+  return `${Number(pct.toPrecision(2))}%`;
 }
 
 export function fmtCountdown(secondsLeft: number): string {
