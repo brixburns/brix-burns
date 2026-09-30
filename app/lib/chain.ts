@@ -27,18 +27,18 @@ const NETWORKS = {
   mainnet: {
     chain: bsc,
     rpc: "https://bsc-dataseed.bnbchain.org",
-    token: "",
-    vault: "",
-    trixster: "",
-    creatorShare: "",
-    devLock: "", // TokenLock: 80% of the 1% dev reserve, published at launch
+    token: "0xc0e9899c790BCFdE93C8507Fa9f43cb8a8717777",
+    vault: "0x372413C6138e9294B23AF4C2AAa7EAbc8D48996d",
+    trixster: "0xce2362f396999595de64109d7cff070734e85755",
+    creatorShare: "0xcd7893086fa480f9d0f8b84f971fddf86da64782",
+    devLock: "0xc35e212b4a503678878cebfd5770cf1bd2abde71", // TokenLock: 80% of the 1% dev reserve, published at launch
     rhChain: robinhood,
     rhRpc: "https://rpc.mainnet.chain.robinhood.com",
     relayerStatus: "https://brix-relayer.420losrs.workers.dev/status",
     burnersTop: "https://brix-burners.420losrs.workers.dev/top",
     portal: "0xe2cE6ab80874Fa9Fa2aAE65D277Dd6B8e65C9De0", // recon-flap-bsc.md
     opensea: "",
-    flap: "", // https://flap.sh/bnb/<token>
+    flap: "https://flap.sh/bnb/0xc0e9899c790BCFdE93C8507Fa9f43cb8a8717777", // https://flap.sh/bnb/<token>
     burnWithBnb: true,
   },
 } as const;
