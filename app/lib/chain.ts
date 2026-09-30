@@ -37,7 +37,7 @@ const NETWORKS = {
     relayerStatus: "https://brix-relayer.420losrs.workers.dev/status",
     burnersTop: "https://brix-burners.420losrs.workers.dev/top",
     portal: "0xe2cE6ab80874Fa9Fa2aAE65D277Dd6B8e65C9De0", // recon-flap-bsc.md
-    opensea: "https://opensea.io/collection/trixster-997945431",
+    opensea: "https://opensea.io/collection/trixster-burns",
     flap: "https://flap.sh/bnb/0xc0e9899c790BCFdE93C8507Fa9f43cb8a8717777", // https://flap.sh/bnb/<token>
     burnWithBnb: true,
   },
