@@ -51,6 +51,11 @@ export const IS_TESTNET = NETWORK === "testnet";
 // Filling the mainnet addresses above switches it on, nothing else to do.
 export const PRELAUNCH = !NET.vault;
 
+// The team stepped back on 08/10/2026: the mint, cracks and Top Burners are
+// over, the workers go off before 24/10. The site keeps what works on its own,
+// forever: the floor read from the chain, redeem and burn with BNB.
+export const ARCHIVED = true;
+
 // Flap tokens launch with a fixed 1B supply: burned = this − effectiveSupply().
 export const INITIAL_SUPPLY = 1_000_000_000n * 10n ** 18n;
 export const MAX_TRIXSTERS = 2222;

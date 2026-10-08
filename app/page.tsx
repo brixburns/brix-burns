@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH } from "./lib/chain";
+import { ARCHIVED, INITIAL_SUPPLY, IS_TESTNET, MAX_TRIXSTERS, NET, PRELAUNCH } from "./lib/chain";
 import { fmtBnb, fmtBrix, fmtCountdown, fmtFloorPerMillion, fmtPct } from "./lib/format";
 import { useLang } from "./lib/i18n";
 import { Usd } from "./lib/prices";
@@ -113,7 +113,9 @@ type NavLink = { href: string; label: string; cls: string };
 function useNavLinks(): NavLink[] {
   const { t } = useLang();
   return [
-    ...(PRELAUNCH ? [] : [
+    ...(PRELAUNCH ? [] : ARCHIVED ? [
+      { href: "#redeem", label: t.navRedeem, cls: "nav-redeem" },
+    ] : [
       { href: "#mint", label: t.navMint, cls: "nav-mint" },
       { href: "#crack", label: t.navCrack, cls: "nav-burners" },
       { href: "#redeem", label: t.navRedeem, cls: "nav-redeem" },
@@ -177,8 +179,10 @@ export default function BrixPage() {
     { label: t.reserve,    value: v ? `${fmtBnb(v.reserve)} BNB` : placeholder },
     { label: t.supply,     value: v ? fmtBrix(v.supply) : placeholder },
     { label: t.burned,     value: v ? fmtPct(v.burned, INITIAL_SUPPLY) : placeholder },
-    { label: t.pot,        value: v ? `${fmtBrix(v.potBrix)} $BRIX` : placeholder },
-    { label: t.minted,     value: v ? `${v.minted} / ${MAX_TRIXSTERS}` : placeholder },
+    ...(ARCHIVED ? [] : [
+      { label: t.pot,        value: v ? `${fmtBrix(v.potBrix)} $BRIX` : placeholder },
+      { label: t.minted,     value: v ? `${v.minted} / ${MAX_TRIXSTERS}` : placeholder },
+    ]),
   ];
 
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -275,7 +279,13 @@ export default function BrixPage() {
           <span>{t.burned} <b>{v ? <Usd brix={v.burned}>{fmtBrix(v.burned)} $BRIX</Usd> : "—"}</b></span>
         </div>
 
-        {/* == MINT PROGRESS ================================================ */}
+        {ARCHIVED ? (
+        <div className="soon-box">
+          <div className="soon-title">{t.archivedTitle}</div>
+          <p className="soon-body">{t.archivedBody}</p>
+        </div>
+        ) : (
+        /* == MINT PROGRESS ================================================ */
         <div className="burn-progress-wrap">
           <div className="burn-progress-track">
             <div className="burn-progress-fill" style={{ width: `${mintedPct}%` }}/>
@@ -286,12 +296,14 @@ export default function BrixPage() {
           </div>
           <div className="mint-clock">{v && <MintClock v={v} now={now}/>}</div>
         </div>
+        )}
       </div>
       )}
 
       <div className="tagline tagline-top"><Cta/></div>
 
-      {!PRELAUNCH && <>
+      {!PRELAUNCH && ARCHIVED && <Redeem v={v}/>}
+      {!PRELAUNCH && !ARCHIVED && <>
         <Mint v={v}/>
         <Crack v={v}/>
         <Redeem v={v}/>

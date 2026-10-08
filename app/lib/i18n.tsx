@@ -33,6 +33,8 @@ const en = {
   disclaimer: "Nothing on this site constitutes financial advice. The floor is backing, not a guaranteed price. Crypto and NFT markets involve risk. Burns are permanent.",
 
   // before launch
+  archivedTitle: "NO LONGER MAINTAINED",
+  archivedBody: "The team has stepped back from $BRIX. The contracts keep working on their own, forever: every trade still feeds the BNB reserve, and anyone can burn $BRIX to redeem their share of it below. The Trixster mint is closed and Top Burners prizes are ending.",
   soonTitle: "LAUNCHING SOON",
   soonBody: "$BRIX launches on Flap, on BNB Chain. The contracts and every official link go live on this page at launch: follow @BRIX_burns to know when.",
   soonFacts: [
@@ -241,6 +243,8 @@ const zh: Dict = {
   footerLine: "// 地板价上升。",
   disclaimer: "本网站内容不构成任何投资建议。地板价是储备支撑，并非保证价格。加密货币与 NFT 市场存在风险。销毁不可撤销。",
 
+  archivedTitle: "已停止维护",
+  archivedBody: "团队已退出 $BRIX。合约将永久自动运行：每笔交易仍为 BNB 储备金注资，任何人都可以在下方销毁 $BRIX，赎回对应的储备金份额。Trixster 铸造已结束，Top Burners 奖励即将停止。",
   soonTitle: "即将上线",
   soonBody: "$BRIX 将在 BNB Chain 上的 Flap 上线。合约地址和所有官方链接将在上线时公布于本页：关注 @BRIX_burns 获取最新消息。",
   soonFacts: [
