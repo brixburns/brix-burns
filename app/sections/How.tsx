@@ -1,5 +1,6 @@
 "use client";
 
+import { ARCHIVED } from "../lib/chain";
 import { useLang } from "../lib/i18n";
 
 // Final weights: BRIX VAULT/art/onchain/weights.json (in tenths: 50/22/14/10/0).
@@ -14,11 +15,14 @@ const TIERS = [
 
 export default function How() {
   const { t } = useLang();
+  // archived: the mint, the reveal and the cracks are over, only the floor stays
   const cards = [
     { n: "01", title: t.howFloorT, body: t.howFloorB },
-    { n: "02", title: t.howMintT, body: t.howMintB },
-    { n: "03", title: t.howRevealT, body: t.howRevealB },
-    { n: "04", title: t.howCrackT, body: t.howCrackB },
+    ...(ARCHIVED ? [] : [
+      { n: "02", title: t.howMintT, body: t.howMintB },
+      { n: "03", title: t.howRevealT, body: t.howRevealB },
+      { n: "04", title: t.howCrackT, body: t.howCrackB },
+    ]),
   ];
   return (
     <section className="panel" id="how">
@@ -33,7 +37,7 @@ export default function How() {
         ))}
       </div>
 
-      <div className="tiers">
+      {!ARCHIVED && <div className="tiers">
         <div className="mp-label">{t.tiersTitle}</div>
         <div className="tier-row">
           {TIERS.map((tier) => (
@@ -45,7 +49,7 @@ export default function How() {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
     </section>
   );
 }

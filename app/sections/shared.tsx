@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useAccount, useBalance, useConnect, useReadContracts, useSwitchChain } from "wagmi";
 import { erc20Abi } from "../lib/abi";
-import { NET } from "../lib/chain";
+import { ARCHIVED, NET } from "../lib/chain";
 import { useLang } from "../lib/i18n";
 import { explorerTx, type TxState } from "../lib/useTx";
 
@@ -91,11 +91,12 @@ export function Cta() {
         <span className="cta-words">{t.followOn}</span>
         <Image src="/logox.svg" alt="" width={18} height={18}/>
       </a>
-      <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand" label={`${t.openseaBtn} OpenSea`}>
+      {/* archived: the collection holds no Trixster anymore, nothing to show */}
+      {!ARCHIVED && <LinkBtn href={NET.opensea} className="btn-outline btn-opensea btn-brand" label={`${t.openseaBtn} OpenSea`}>
         <span className="cta-words">{t.openseaBtn}</span>
         <Image src="/opensea-logo.svg" alt="" width={77} height={20} className="cta-full"/>
         <Image src="/opensea-mark.svg" alt="" width={24} height={24} className="cta-mark"/>
-      </LinkBtn>
+      </LinkBtn>}
     </div>
   );
 }
